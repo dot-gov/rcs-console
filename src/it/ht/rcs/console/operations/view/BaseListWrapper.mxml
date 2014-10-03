@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					width="100%"
+					doubleClickEnabled="true"
+					verticalAlign="top"
+					creationComplete="init()">
+  <fx:Metadata> 
+    [Event(name="change", type="flash.events.Event")] 
+  </fx:Metadata> 
+	<fx:Script>
+		<![CDATA[
+			import fr.kapit.flex.ui.spark.button.Button;
+			
+			import it.ht.rcs.console.main.Section;
+			
+			import mx.collections.ArrayCollection;
+			import mx.events.CollectionEvent;
+			import mx.graphics.Stroke;
+			
+			import spark.events.IndexChangeEvent;
+			import spark.primitives.Line;
+
+			private function init():void
+			{
+
+			}
+
+
+			[Bindable]
+			public var section:Section;
+
+			
+			private var _selectedItem:Object;
+
+
+
+			private var lists:Array=new Array()
+
+			public function draw(value:ArrayCollection):void
+			{
+        selectedItem=null
+				removeAllElements();
+				lists=[];
+				for (var i:int=0; i < value.length; i++)
+				{
+					var list:BaseListWrapperRenderer=new BaseListWrapperRenderer();
+					var separator:LineSeparator=new LineSeparator();
+          list.doubleClickEnabled=true;
+					list.dataProvider=value.getItemAt(i) as ArrayCollection;
+					list.addEventListener(IndexChangeEvent.CHANGE, onSelection);
+          list.addEventListener(MouseEvent.DOUBLE_CLICK,onDoubleClick)
+					addElement(list);
+					addElement(separator);
+					lists.push(list);
+
+				}
+
+			}
+      
+      private function onDoubleClick(e:MouseEvent):void
+      {
+      dispatchEvent(e)
+      e.stopImmediatePropagation()
+      }
+
+			private function onSelection(e:IndexChangeEvent):void
+			{
+        if(e.newIndex==-1)
+          unSelectAll()
+				for (var i:int=0; i < lists.length; i++)
+				{
+					var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+					if (list != e.currentTarget)
+					{
+						list.selectedIndex=-1;
+					}
+				}
+        selectedItem=e.currentTarget.selectedItem;
+        //dispatchEvent(e)
+			}
+      
+      public function unSelectAll():void
+      {
+        for (var i:int=0; i < lists.length; i++)
+        {
+          var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+       
+          list.selectedIndex=-1;
+     
+        }
+        
+        selectedItem=null
+        //dispatchEvent(new Event(Event.CHANGE))
+      }
+
+			public function clear():void
+			{
+				removeAllElements();
+				lists=[];
+			}
+      
+      
+      
+      [Bindable]
+      public function get selectedItem():Object
+      {
+      return _selectedItem;
+      }
+      public function set selectedItem(value:Object):void
+      {
+        _selectedItem=value;
+       
+      
+        for (var i:int=0; i < lists.length; i++)
+        {
+          var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+          if(list.dataProvider.getItemIndex(value)!=-1)
+          {
+            list.selectedItem=value;
+          }
+          else
+          {
+            list.selectedIndex=-1;
+          }
+        }
+        dispatchEvent(new Event(Event.CHANGE))
+      }
+        
+		]]>
+	</fx:Script>
+
+
+</s:VGroup>

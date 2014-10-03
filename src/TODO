@@ -16,7 +16,11 @@ TODO 9.x.x
 
 
 AGENT
-Push su configurazioni 
+Push su configurazioni (TESTARE)
+
+
+TARGET
+Visualizzazione di elementi in griglia su + righe
 
 ENTITY:
   - Push in vista link > ridisegnare grafico solo se dati nuovi sono rilevanti ai fini del grafico (es. nuova entità, nuovo link - no nuova last position o dati scheda) (OK)

@@ -141,10 +141,10 @@ package it.ht.rcs.console.dashboard.view.renderer
     [Embed(source='/img/NEW/device/desktop_linux.png')]
     public static const desktop_linux:Class;
     
-    [Embed(source='/img/NEW/device/factory_desktop.png')]
+    [Embed(source='/img/NEW/factory_desktop.png')]
     public static const factory_desktop:Class;
     
-    [Embed(source='/img/NEW/device/factory_mobile.png')]
+    [Embed(source='/img/NEW/factory_mobile.png')]
     public static const factory_mobile:Class;
     
     [Embed(source='/img/NEW/device/agent_desktop.png')]
