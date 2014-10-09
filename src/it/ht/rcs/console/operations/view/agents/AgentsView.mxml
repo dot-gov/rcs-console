@@ -65,10 +65,6 @@
         section.stateManager.addEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
 				AgentManager.instance.refresh();
 				AgentManager.instance.listenAgentPush();
-
-				
-			
-
 			}
 
 			private function onUpdate(e:Event):void
@@ -135,7 +131,7 @@
 						<s:VGroup height="100%"
 											width="100%"
 											clipAndEnableScrolling="true">
-							<view:BaseListWrapper id="list"
+							<agents:AgentsListWrapper id="list"
 																		width="100%"
 																		selectedItem="{grid.selectedItem}"
 																		change="onListChange()" doubleClickEnabled="true" doubleClick="onDoubleClick(event)"

@@ -11,6 +11,7 @@
   </fx:Metadata> 
 	<fx:Script>
 		<![CDATA[
+      import it.ht.rcs.console.operations.view.LineSeparator;
 			import fr.kapit.flex.ui.spark.button.Button;
 			
 			import it.ht.rcs.console.main.Section;
@@ -43,9 +44,11 @@
         selectedItem=null
 				removeAllElements();
 				lists=[];
+        if(!value)
+          return;
 				for (var i:int=0; i < value.length; i++)
 				{
-					var list:BaseListWrapperRenderer=new BaseListWrapperRenderer();
+					var list:AgentsListWrapperRenderer=new AgentsListWrapperRenderer();
 					var separator:LineSeparator=new LineSeparator();
           list.doubleClickEnabled=true;
 					list.dataProvider=value.getItemAt(i) as ArrayCollection;
@@ -71,7 +74,7 @@
           unSelectAll()
 				for (var i:int=0; i < lists.length; i++)
 				{
-					var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+					var list:AgentsListWrapperRenderer=lists[i] as AgentsListWrapperRenderer;
 					if (list != e.currentTarget)
 					{
 						list.selectedIndex=-1;
@@ -85,7 +88,7 @@
       {
         for (var i:int=0; i < lists.length; i++)
         {
-          var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+          var list:AgentsListWrapperRenderer=lists[i] as AgentsListWrapperRenderer;
        
           list.selectedIndex=-1;
      
@@ -115,7 +118,7 @@
       
         for (var i:int=0; i < lists.length; i++)
         {
-          var list:BaseListWrapperRenderer=lists[i] as BaseListWrapperRenderer;
+          var list:AgentsListWrapperRenderer=lists[i] as AgentsListWrapperRenderer;
           if(list.dataProvider.getItemIndex(value)!=-1)
           {
             list.selectedItem=value;
