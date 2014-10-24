@@ -32,10 +32,7 @@
 			[Bindable]
 			public var section:Section;
 
-			
 			private var _selectedItem:Object;
-
-
 
 			private var lists:Array=new Array()
 
@@ -57,7 +54,6 @@
 					addElement(list);
 					addElement(separator);
 					lists.push(list);
-
 				}
 
 			}
@@ -89,9 +85,7 @@
         for (var i:int=0; i < lists.length; i++)
         {
           var list:AgentsListWrapperRenderer=lists[i] as AgentsListWrapperRenderer;
-       
           list.selectedIndex=-1;
-     
         }
         
         selectedItem=null
@@ -114,8 +108,7 @@
       public function set selectedItem(value:Object):void
       {
         _selectedItem=value;
-       
-      
+
         for (var i:int=0; i < lists.length; i++)
         {
           var list:AgentsListWrapperRenderer=lists[i] as AgentsListWrapperRenderer;
