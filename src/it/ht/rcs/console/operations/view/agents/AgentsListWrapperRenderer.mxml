@@ -3,15 +3,15 @@
 							 xmlns:s="library://ns.adobe.com/flex/spark"
 							 xmlns:mx="library://ns.adobe.com/flex/mx"
 							 xmlns:view="it.ht.rcs.console.operations.view.*"
-							 height="{(tilelayout.rowCount * tilelayout.rowHeight) + ((tilelayout.rowCount - 1) * tilelayout.verticalGap)+20}" >
+							 height="{(tilelayout.rowCount * tilelayout.rowHeight) + ((tilelayout.rowCount - 1) * tilelayout.verticalGap)+20}">
   <fx:Script>
     <![CDATA[
       import spark.events.IndexChangeEvent;
       override protected function onClick(event:MouseEvent):void
       {
         selectedIndex = -1;
-        dispatchEvent(new IndexChangeEvent(IndexChangeEvent.CHANGE))
-        //event.stopImmediatePropagation()
+        dispatchEvent(new IndexChangeEvent(IndexChangeEvent.CHANGE));
+        //event.stopImmediatePropagation();
       }
     ]]>
   </fx:Script>
