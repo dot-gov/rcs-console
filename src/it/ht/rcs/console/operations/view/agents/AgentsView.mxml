@@ -1,93 +1,196 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
-          xmlns:s="library://ns.adobe.com/flex/spark"
-          xmlns:mx="library://ns.adobe.com/flex/mx"
-          xmlns:agents="it.ht.rcs.console.operations.view.agents.*"
-          xmlns:view="it.ht.rcs.console.operations.view.*"
-          width="100%" height="100%" 
-          addedToStage="onAddeToStage(event)" 
-          removedFromStage="onRemovedFromStage(event)">
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:agents="it.ht.rcs.console.operations.view.agents.*"
+					xmlns:view="it.ht.rcs.console.operations.view.*"
+					width="100%"
+					height="100%"
+					addedToStage="onAddeToStage(event)"
+					removedFromStage="onRemovedFromStage(event)">
 
-  <fx:Script>
-    <![CDATA[
-      import it.ht.rcs.console.agent.controller.AgentManager;
-      import it.ht.rcs.console.operations.view.OperationsSection;
+	<fx:Script>
+		<![CDATA[
+			import it.ht.rcs.console.agent.controller.AgentManager;
+			import it.ht.rcs.console.operations.view.OperationsSection;
+			import it.ht.rcs.console.operations.view.OperationsSectionStateManager;
+
+			import locale.R;
+
+			[Bindable]
+			public var section:OperationsSection;
+
+
+			private function onDoubleClick(event:MouseEvent):void
+			{
+				var item:*
+
+				if (event.currentTarget === list)
+					item=list.selectedItem;
+
+				else if (event.currentTarget === customTypesList)
+					item=customTypesList.selectedItem;
+
+				else if (event.currentTarget === grid)
+					item=grid.selectedItem;
+
+				if (item)
+				{
+					if (item._kind == 'factory' && item.status != "open")
+						return;
+					section.stateManager.manageItemSelection(item);
+				}
+				;
+			}
+
+			private function onKeyUp(event:KeyboardEvent):void
+			{
+				if (event.keyCode == Keyboard.ENTER)
+				{
+					var item:*=event.currentTarget === list ? list.selectedItem : grid.selectedItem;
+					if (item)
+					{
+						if (item._kind == 'factory' && item.status != "open")
+							return;
+						section.stateManager.manageItemSelection(item);
+					}
+					;
+				}
+			}
+
+			protected function onAddeToStage(event:Event):void
+			{
+        if (list)
+          list.clear();
+        section.stateManager.addEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
+				AgentManager.instance.refresh();
+				AgentManager.instance.listenAgentPush();
+			}
+
+			private function onUpdate(e:Event):void
+			{
+				list.draw(section.stateManager.idents)
+			}
+
+
+			protected function onRemovedFromStage(event:Event):void
+			{
+				AgentManager.instance.unlistenAgentPush()
+        AgentManager.instance.unlistenFactoryPush()
+				section.stateManager.removeEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
+			}
       
-      import locale.R;
-      
-      [Bindable]
-      public var section:OperationsSection;
-      
-      private function onDoubleClick(event:MouseEvent):void
+      private function onListChange():void
       {
-        var item:* = event.currentTarget === list ? list.selectedItem : grid.selectedItem;
-        if (item) {
-          if(item._kind == 'factory' && item.status!="open")
-            return;
-          section.stateManager.manageItemSelection(item);
-        };
-      }
-      
-      private function onKeyUp(event:KeyboardEvent):void
-      {
-        if (event.keyCode == Keyboard.ENTER) {
-          var item:* = event.currentTarget === list ? list.selectedItem : grid.selectedItem;
-          if (item) {
-            if(item._kind == 'factory' && item.status!="open")
-              return;
-            section.stateManager.manageItemSelection(item);
-          };
-        }
-      }
-      
-      protected function onAddeToStage(event:Event):void
-      {
+
         AgentManager.instance.refresh();
         AgentManager.instance.listenAgentPush();
         AgentManager.instance.listenFactoryPush()
+        trace("LIST CHANGE > Remove selection")
+        customTypesList.selectedIndex=-1
+        customTypesList.validateNow()
         
       }
       
-      protected function onRemovedFromStage(event:Event):void
-      {
-        AgentManager.instance.unlistenAgentPush()
-        AgentManager.instance.unlistenFactoryPush()
-      }
-    ]]>
-  </fx:Script>
-  
-  
-  <agents:AgentsActionBar section="{section}" selectedObject="{list.selectedItem}" viewStack="{views}"/>
-  
-  
-  <mx:ViewStack id="views" width="100%" height="100%" creationPolicy="all">
-    <s:NavigatorContent label="{R.get('ICON_VIEW')}" hideEffect="{fadeOut}"
-                        icon="@Embed('/img/windows/icon.png')" showEffect="{fadeIn}">
-      
-      <s:HGroup width="100%" height="100%" gap="5">
-        
-        <view:BaseList id="list" dataProvider="{section.stateManager.view}" selectedItem="{grid.selectedItem}" section="{section}"
-                       doubleClick="onDoubleClick(event)" keyUp="onKeyUp(event)"/>
-        
-        <agents:AgentsInfoPanel selectedItem="{section.stateManager.selectedAgent?section.stateManager.selectedAgent : list.selectedItem}" section="{section}" showDetails="{list.selectedItem || section.currentState == 'singleAgent'}"/>
-        
-      </s:HGroup>
-      
-    </s:NavigatorContent>
-    <s:NavigatorContent label="{R.get('TABLE_VIEW')}" hideEffect="{fadeOut}"
-                        icon="@Embed('/img/windows/list.png')" showEffect="{fadeIn}">
-      
-      
-      <agents:AgentsGrid id="grid" dataProvider="{section.stateManager.tableView}" selectedItem="{list.selectedItem}"
-                         doubleClick="onDoubleClick(event)" keyUp="onKeyUp(event)"/>
-      
-      
-    </s:NavigatorContent>
-  </mx:ViewStack>
 
-  <fx:Declarations>
-    <s:Fade id="fadeIn" alphaFrom="0" alphaTo="1" duration="150"/>
-    <s:Fade id="fadeOut" alphaFrom="1" alphaTo="0" duration="150"/>
-  </fx:Declarations>
-    
+		]]>
+	</fx:Script>
+
+
+	<agents:AgentsActionBar section="{section}"
+													selectedObject="{list.selectedItem}"
+													viewStack="{views}"/>
+
+
+	<mx:ViewStack id="views"
+								width="100%"
+								height="100%"
+								creationPolicy="all">
+		<s:NavigatorContent label="{R.get('ICON_VIEW')}"
+												hideEffect="{fadeOut}"
+												icon="@Embed('/img/windows/icon.png')"
+												showEffect="{fadeIn}">
+
+			<s:HGroup width="100%"
+								height="100%"
+								gap="5">
+				<s:VGroup width="100%"
+									height="100%"
+									verticalAlign="top">
+					<view:BaseList id="customTypesList"
+												 dataProvider="{section.stateManager.customTypes}"
+												 section="{section}"
+												 doubleClick="onDoubleClick(event)"
+												 keyUp="onKeyUp(event)"
+												 height="120"
+												 change="{list.selectedItem=null}"
+												/>
+					<s:Line width="100%"
+									visible="{section.currentState=='singleTarget'}"
+									includeInLayout="{section.currentState=='singleTarget'}">
+						<s:stroke>
+							<s:SolidColorStroke color="0xCCCCCC"/>
+						</s:stroke>
+					</s:Line>
+					<s:Scroller width="100%"
+											height="100%"  visible="{section.currentState=='singleTarget'}"
+                      includeInLayout="{section.currentState=='singleTarget'}">
+						<s:VGroup height="100%"
+											width="100%"
+											clipAndEnableScrolling="true">
+							<agents:AgentsListWrapper id="list"
+																		width="100%"
+																		selectedItem="{grid.selectedItem}"
+																		change="onListChange()" doubleClickEnabled="true" doubleClick="onDoubleClick(event)"
+																		/>
+						</s:VGroup>
+					</s:Scroller>
+
+
+					<!-- <view:BaseList id="list"
+													dataProvider="{section.stateManager.view}"
+													change="{customTypesList.selectedItem=null}"
+													selectedItem="{grid.selectedItem}"
+													section="{section}"
+													doubleClick="onDoubleClick(event)"
+													keyUp="onKeyUp(event)" />-->
+
+				</s:VGroup>
+
+
+				<agents:AgentsInfoPanel selectedItem="{section.stateManager.selectedAgent?section.stateManager.selectedAgent : list.selectedItem}"
+																section="{section}"
+																showDetails="{list.selectedItem || section.currentState == 'singleAgent'}"/>
+
+			</s:HGroup>
+
+		</s:NavigatorContent>
+		<s:NavigatorContent label="{R.get('TABLE_VIEW')}"
+												hideEffect="{fadeOut}"
+												icon="@Embed('/img/windows/list.png')"
+												showEffect="{fadeIn}">
+
+
+			<agents:AgentsGrid id="grid"
+												 dataProvider="{section.stateManager.tableView}"
+												 selectedItem="{list.selectedItem}"
+												 selectionChange="{customTypesList.selectedItem=null}"
+												 doubleClick="onDoubleClick(event)"
+												 keyUp="onKeyUp(event)"/>
+
+
+		</s:NavigatorContent>
+	</mx:ViewStack>
+
+	<fx:Declarations>
+		<s:Fade id="fadeIn"
+						alphaFrom="0"
+						alphaTo="1"
+						duration="150"/>
+		<s:Fade id="fadeOut"
+						alphaFrom="1"
+						alphaTo="0"
+						duration="150"/>
+	</fx:Declarations>
+
 </s:VGroup>

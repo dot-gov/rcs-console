@@ -10,8 +10,11 @@
     <![CDATA[
       import it.ht.rcs.console.agent.controller.AgentManager;
       import it.ht.rcs.console.agent.model.Agent;
+      import it.ht.rcs.console.agent.model.Config;
       import it.ht.rcs.console.events.RefreshEvent;
       import it.ht.rcs.console.operations.view.OperationsSection;
+      import it.ht.rcs.console.push.PushController;
+      import it.ht.rcs.console.push.PushEvent;
       import it.ht.rcs.console.utils.TimeUtils;
       
       import locale.R;
@@ -35,14 +38,75 @@
         refresh();
         if (bar)
           bar.selectedObject = grid.selectedItem;
+        
+        PushController.instance.addEventListener(PushEvent.AGENT_CONFIG, onConfigPush);
       }
       
       private function onRemovedFromStage():void
       {
         FlexGlobals.topLevelApplication.removeEventListener(RefreshEvent.REFRESH, refresh);
         configs = null; // to avoid flickering when switching view
+        PushController.instance.removeEventListener(PushEvent.AGENT_CONFIG, onConfigPush);
+      }
+      private function onConfigPush(e:PushEvent):void
+      {
+        if(!configs)
+          return ;
+        
+        var c:Config;
+        switch (e.data.action)
+        {
+          
+          case PushEvent.CREATE:
+            trace("config creation");
+            c=new Config(e.data.changes);
+            c._id=e.data.id;
+            if(!configExists(c))
+              configs.addItem(c)
+            configs.refresh();
+            grid.dataProvider=configs;
+            break;
+          
+          case PushEvent.MODIFY:
+            trace("config update");
+            c = getItem(e.data.id)
+            if(!c)
+              return;
+
+            for(var property:String in e.data.changes)
+            {
+              if( c[property])
+                c[property] = e.data.changes[property];
+            }
+            configs.refresh();
+            grid.dataProvider=configs;
+            break;
+        
+        }
       }
       
+      private function getItem(id:String):Config
+      {
+        for(var i:int=0;i<configs.length;i++)
+        {
+          var c:Config=configs.getItemAt(i) as Config;
+          if(c._id==id)
+            return c;
+        }
+        return null;
+      }
+      
+      private function configExists(config:Config):Boolean
+      {
+  
+      for(var i:int=0;i<configs.length;i++)
+      {
+      var c:Config=configs.getItemAt(i) as Config;
+      if(c._id==config._id)
+        return true;
+      }
+      return false;
+      }
       private function refresh(e:Event=null):void
       {
         grid.selectedItem = bar.selectedObject = null;

@@ -23,7 +23,7 @@
   ]]>
 </fx:Script>
   <s:layout>
-    <s:TileLayout horizontalGap="15" paddingBottom="10" paddingLeft="10" paddingRight="10"
+    <s:TileLayout horizontalGap="15" paddingBottom="10" paddingLeft="10" paddingRight="10" id="tilelayout"
                   paddingTop="10" verticalGap="15"/>
   </s:layout>
   

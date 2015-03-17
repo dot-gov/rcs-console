@@ -131,7 +131,7 @@
         else if (data is Agent && data._kind == 'agent')
           return data.platform ? Icons[data.type + '_' + data.platform] : Icons['agent_' + data.type];
         else if (data is Agent && data._kind == 'factory')
-          return Icons['agent_' + data.type];
+          return Icons['factory_' + data.type];
         else if (data is Entity && data.type=="target")
           return entityTargetIcon;
         else if (data is Entity && data.type=="person")
@@ -181,7 +181,7 @@
  
   
   <s:Label id="bottomLabel" top="62" width="110" horizontalCenter="0" paddingBottom="5"
-           textAlign="center" maxDisplayedLines="2" fontFamily="Myriad" fontSize="12" fontWeight="normal"/>
+           textAlign="center" maxDisplayedLines="2" fontFamily="Myriad" fontSize="12" fontWeight="{data.hasOwnProperty('customType')?'bold':'normal'}"/>
   
   
   

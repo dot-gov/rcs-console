@@ -1,6 +1,7 @@
 package it.ht.rcs.console.operations.view
 {
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	
 	import it.ht.rcs.console.accounting.controller.UserManager;
@@ -22,9 +23,11 @@ package it.ht.rcs.console.operations.view
 	
 	import locale.R;
 	
+	import mx.collections.ArrayCollection;
 	import mx.collections.ArrayList;
 	import mx.collections.ListCollectionView;
 	import mx.core.FlexGlobals;
+	import mx.events.CollectionEvent;
 	import mx.managers.CursorManager;
 	
 	import spark.collections.Sort;
@@ -32,11 +35,20 @@ package it.ht.rcs.console.operations.view
 	import spark.components.TextInput;
 	import spark.globalization.SortingCollator;
 
-	public class OperationsSectionStateManager
+
+	public class OperationsSectionStateManager extends EventDispatcher
 	{
+
+
 
 		[Bindable]
 		public var view:ListCollectionView;
+
+		[Bindable]
+		public var idents:ArrayCollection;
+
+		[Bindable]
+		public var customTypes:ListCollectionView;
 
 		[Bindable]
 		public var tableView:ListCollectionView;
@@ -55,12 +67,15 @@ package it.ht.rcs.console.operations.view
 		private var section:OperationsSection;
 
 		private var customTypeSort:Sort;
+    private var identSort:Sort
 		private var tableSort:Sort;
 		private var collator:SortingCollator;
 
 		private var previousState:String;
 
 		public static var currInstance:OperationsSectionStateManager;
+    
+    public static const UPDATE:String="update"
 
 		public function OperationsSectionStateManager(section:OperationsSection)
 		{
@@ -76,23 +91,64 @@ package it.ht.rcs.console.operations.view
 
 			tableSort=new Sort();
 			tableSort.compareFunction=customTypeCompareFunction;
+      
+      identSort=new Sort()
+      identSort.compareFunction=identSortCompareFunction
 
 			HistoryManager.instance.addEventListener("change", onHistory)
-      TargetManager.instance.addEventListener("dataPush", onTargetPush)
-      AgentManager.instance.addEventListener("dataPush", onAgentPush)
+			TargetManager.instance.addEventListener("dataPush", onTargetPush)
+			AgentManager.instance.addEventListener("dataPush", onAgentPush)
+        
+     
+		}
+    private function identSortCompareFunction(a:Object, b:Object, fields:Array = null):int
+    {
+      if(a is ArrayCollection && b is ArrayCollection && a.getItemAt(0) is Agent && b.getItemAt(0) is Agent )
+        return collator.compare(a.getItemAt(0).ident, b.getItemAt(0).ident);
+      return 0;
+    }
+    private function onCollectionChange(e:CollectionEvent):void
+    {
+      if(currentState=='singleTarget')
+      groupByIdent()
+    }
+    
+    public function groupByIdent():void
+    {
+      var i:int;
+      var identDictionary:Dictionary=new Dictionary()
+      for (i=0; i < view.length; i++)
+      {
+        if(view.getItemAt(i) is Agent)
+        {
+          if(!identDictionary[view.getItemAt(i).ident])
+            identDictionary[view.getItemAt(i).ident]=new ArrayCollection()
+          identDictionary[view.getItemAt(i).ident].addItem(view.getItemAt(i))
+        }
+      
+      }
+      if(!idents)
+      idents=new ArrayCollection
+      idents.sort=identSort;
+      idents.removeAll();
+      for each (var ident:ArrayCollection in identDictionary)
+      {
+        idents.addItem(ident);
+      }
+      dispatchEvent(new Event(UPDATE));
+    }
+
+
+		private function onTargetPush(e:Event):void
+		{
+			update()
 		}
 
-    
-    private function onTargetPush(e:Event):void
-    {
-      update()
-    }
-    
-    private function onAgentPush(e:Event):void
-    {
-      update()   
-    }
-    
+		private function onAgentPush(e:Event):void
+		{
+			update()
+		}
+
 		private function getItemFromEvent(event:SectionEvent):*
 		{
 			var item:SearchItem=event ? event.item : null;
@@ -289,12 +345,12 @@ package it.ht.rcs.console.operations.view
 					section.currentState='commands';
 				else if (HistoryManager.instance.currentItem.state == "info")
 					section.currentState='info';
-        else if (HistoryManager.instance.currentItem.state == "ipaddresses")
-          section.currentState='ipaddresses';
-        else if (HistoryManager.instance.currentItem.state == "filesystem")
-          section.currentState='filesystem';
-        else if (HistoryManager.instance.currentItem.state == "filetransfer")
-          section.currentState='filetransfer';
+				else if (HistoryManager.instance.currentItem.state == "ipaddresses")
+					section.currentState='ipaddresses';
+				else if (HistoryManager.instance.currentItem.state == "filesystem")
+					section.currentState='filesystem';
+				else if (HistoryManager.instance.currentItem.state == "filetransfer")
+					section.currentState='filetransfer';
 				else if (HistoryManager.instance.currentItem.state == "evidence")
 					section.currentState='evidence';
 				else
@@ -434,18 +490,42 @@ package it.ht.rcs.console.operations.view
 
 		private function update():void
 		{
-			removeCustomTypes(view);
+			//removeCustomTypes(view);
 			view=getView();
-			removeCustomTypes(view);
-			addCustomTypes(view);
+    
+			customTypes=getCustomTypes();
+			//removeCustomTypes(view);
+			//addCustomTypes(view);
+      
 			if (view)
+      {
 				view.refresh();
+        view.addEventListener(CollectionEvent.COLLECTION_CHANGE, onCollectionChange) 
+      }
 
 			if (CurrentManager != null)
 			{
 				tableView=CurrentManager.instance.getView(tableSort, tableFilterFunction);
 				tableView.refresh();
 			}
+
+			if (currentState == 'singleTarget')
+			{
+				var i:int;
+        var identDictionary:Dictionary=new Dictionary()
+				for (i=0; i < view.length; i++)
+				{
+					if(!identDictionary[view.getItemAt(i).ident])
+            identDictionary[view.getItemAt(i).ident]=new ArrayCollection()
+          identDictionary[view.getItemAt(i).ident].addItem(view.getItemAt(i))
+				}
+        idents=new ArrayCollection
+        for each (var ident:ArrayCollection in identDictionary)
+        {
+          idents.addItem(ident);
+        }
+			}
+      dispatchEvent(new Event(UPDATE));
 		}
 
 		private function tableFilterFunction(item:Object):Boolean
@@ -458,45 +538,43 @@ package it.ht.rcs.console.operations.view
 				return true;
 		}
 
-		private function removeCustomTypes(list:ListCollectionView):void
+
+		private function getCustomTypes():ListCollectionView
 		{
-			if (list != null && list.length > 0)
-				for (var i:int=0; i < list.length; i++)
-					if (list.getItemAt(i).hasOwnProperty('customType'))
-					{
-						list.removeItemAt(i);
-						i--;
-					}
+			customTypes=new ListCollectionView()
+			customTypes.list=new ArrayList();
+      
+      
+      if((currentState == 'singleTarget' || currentState == 'singleAgent') && (Console.currentSession.user.is_view()))
+      {
+        customTypes.addItem({name: R.get('EVIDENCE'), customType: 'evidence'})
+        if (Console.currentSession.user.is_view_filesystem())
+        {
+        customTypes.addItem({name: R.get('FILE_SYSTEM'), customType: 'filesystem'})}
+      }
+      if (currentState == 'singleAgent')
+      {
+        if (Console.currentSession.user.is_tech())
+        {
+          customTypes.addItem({name: R.get('CONFIG'), customType: 'configlist'});
+        }
+        customTypes.addItem({name: R.get('INFO'), customType: 'info'});
+
+        if (LicenseManager.instance.modify)
+        {
+          customTypes.addItem({name: R.get('COMMANDS'), customType: 'commands'});
+        }
+        customTypes.addItem({name: R.get('SYNC_HISTORY'), customType: 'ipaddresses'});
+        if (Console.currentSession.user.is_tech())
+        {
+          customTypes.addItem({name: R.get('FILE_TRANSFER'), customType: 'filetransfer'});
+          
+        }
+      }
+			return customTypes;
 		}
 
-		private function addCustomTypes(list:ListCollectionView):void
-		{
-			if (list == null)
-				return;
-			if ((currentState == 'singleTarget' || currentState == 'singleAgent') && (Console.currentSession.user.is_view()))
-			{
-				list.addItemAt({name: R.get('EVIDENCE'), customType: 'evidence', order: 0}, 0);
-				if (Console.currentSession.user.is_view_filesystem())
-				{
-					list.addItemAt({name: R.get('FILE_SYSTEM'), customType: 'filesystem', order: 1}, 0);
-				}
-			}
-			if (currentState == 'singleAgent')
-			{
-				list.addItemAt({name: R.get('INFO'), customType: 'info', order: 3}, 0);
-				if (LicenseManager.instance.modify)
-				{
-					list.addItemAt({name: R.get('COMMANDS'), customType: 'commands', order: 4}, 0);
-				}
-				list.addItemAt({name: R.get('SYNC_HISTORY'), customType: 'ipaddresses', order: 5}, 0);
-				if (Console.currentSession.user.is_tech())
-				{
-					list.addItemAt({name: R.get('CONFIG'), customType: 'configlist', order: 2}, 0);
-					list.addItemAt({name: R.get('FILE_TRANSFER'), customType: 'filetransfer', order: 6}, 0);
-
-				}
-			}
-		}
+		
 
 		private function getView():ListCollectionView
 		{
@@ -535,6 +613,8 @@ package it.ht.rcs.console.operations.view
 				lcv.sort=customTypeSort;
 				lcv.filterFunction=currentFilter;
 			}
+
+
 			return lcv;
 		}
 
