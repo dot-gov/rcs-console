@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/15.0">
+<application xmlns="http://ns.adobe.com/air/application/16.0">
 
 <!-- Adobe AIR Application Descriptor File Template.
 
@@ -27,10 +27,10 @@
 	Values can also be 1-part or 2-part. It is not necessary to have a 3-part value.
 	An updated version of application must have a versionNumber value higher than the previous version. Required for namespace >= 2.5 . -->
 
-	<versionNumber>15.03.11</versionNumber>
+	<versionNumber>15.03.12</versionNumber>
 
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
-	<versionLabel>2015.03.11.01</versionLabel>
+	<versionLabel>2015.03.12.01</versionLabel>
 
 
 
@@ -46,6 +46,7 @@
 
 	<!-- Settings for the application's initial window. Required. -->
 	<initialWindow>
+	  <requestedDisplayResolution>high</requestedDisplayResolution>
 		<!-- The main SWF or HTML file of the application. Required. -->
 		<!-- Note: In Flash Builder, the SWF reference is set automatically. -->
 		<content>[This value will be overwritten by Flash Builder in the output app.xml]</content>
