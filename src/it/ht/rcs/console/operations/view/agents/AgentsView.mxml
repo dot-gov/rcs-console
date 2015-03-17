@@ -69,7 +69,7 @@
 
 			private function onUpdate(e:Event):void
 			{
-				list.draw(section.stateManager.idents)
+				list.draw(section.stateManager.idents)//
 			}
 
 
