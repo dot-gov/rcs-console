@@ -174,8 +174,6 @@
 				content=attachment ? StringUtils.getFilename(data.data.path) : "<b>" + R.get('CONTENT') + ": </b>" + data.data.content;
 
 
-			
-
 				image=null
 
 				if (getAttachmentType() == "image")

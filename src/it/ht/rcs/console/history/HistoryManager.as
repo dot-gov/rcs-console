@@ -42,7 +42,7 @@ package it.ht.rcs.console.history
 
 		public function init():void
 		{
-			trace("HISTORY MANAGER INIT");
+	
 			history=new Array();
 			var item:HistoryItem=new HistoryItem();
 			item.section="Home"
@@ -84,7 +84,6 @@ package it.ht.rcs.console.history
 			if (end > start)
 				history.splice(start)
 
-			trace("SECTION CHANGE: " + e.section);
 			var item:HistoryItem=new HistoryItem();
 			item.section=e.section;
 			item.subSection=0;
@@ -151,7 +150,7 @@ package it.ht.rcs.console.history
 
 		public function dumpHistory():void
 		{
-			trace("==============")
+		/*	trace("==============")
 			trace("HISTORY")
 			trace("==============")
 
@@ -170,12 +169,14 @@ package it.ht.rcs.console.history
           trace("entity:    " + item.entity.name);
 				if (item.agent)
 					trace("agent:     " + item.agent.name);
+        if (item.factory)
+          trace("factory:     " + item.factory.name);
 				if (item.config)
 					trace("config:    " + item.config.config);
 
 			}
 			trace("==============")
-			trace("index:   " + currentIndex)
+			trace("index:   " + currentIndex)*/
 		}
 
 

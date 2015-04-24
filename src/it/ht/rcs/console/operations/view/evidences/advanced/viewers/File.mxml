@@ -11,23 +11,23 @@
 	<fx:Script>
 		<![CDATA[
 			import flash.filesystem.File;
-
+			
 			import flashx.textLayout.conversion.TextConverter;
-
+			
 			import it.ht.rcs.console.DB;
 			import it.ht.rcs.console.evidence.controller.EvidenceManager;
 			import it.ht.rcs.console.evidence.model.Evidence;
+			import it.ht.rcs.console.monitor.controller.LicenseManager;
 			import it.ht.rcs.console.operations.view.evidences.EvidenceAdvancedViewer;
 			import it.ht.rcs.console.operations.view.evidences.EvidencesView;
 			import it.ht.rcs.console.utils.FileUtils;
 			import it.ht.rcs.console.utils.Size;
 			import it.ht.rcs.console.utils.StringUtils;
-			import it.ht.rcs.console.monitor.controller.LicenseManager;
-
-			import mx.rpc.events.ResultEvent;
-			import mx.rpc.events.FaultEvent;
-
+			
 			import locale.R;
+			
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
 
 			private var _evidence:Object;
 			private var file:flash.filesystem.File;
@@ -61,8 +61,7 @@
 			public function set evidence(value:Object):void
 			{
 				_evidence=value;
-
-				t=setTimeout(updateView, 100)
+        updateView()
 			}
 
 			private function updateView():void
@@ -89,11 +88,23 @@
 					var url:String=DB.hostAutocomplete(Console.currentSession.server) + "evidence/body/" + id + "?target=" + target;
 					loader=new URLLoader()
 					loader.addEventListener(Event.COMPLETE, onContentLoaded);
+          loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
+          loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 					loader.load(new URLRequest(url));
-					callLater(onTranslate, [null])
-					clearTimeout(t)
+					//callLater(onTranslate, [null])
+					//clearTimeout(t)
 				}
 			}
+      
+      private function onError(e:Event):void
+      {
+				trace("ERROR")
+				loader.removeEventListener(Event.COMPLETE, onContentLoaded);
+				loader.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+				loader.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+        content=R.get('OCR_NO_DATA');
+        contentTxt.textFlow=TextConverter.importToFlow('<b>Content: </b>' + content, TextConverter.TEXT_FIELD_HTML_FORMAT)
+      }
 
 			private function init():void
 			{
@@ -105,11 +116,11 @@
 
 			private function onContentLoaded(e:Event):void
 			{
+        trace("LOADED")
 				loader.removeEventListener(Event.COMPLETE, onContentLoaded);
 				content=e.currentTarget.data;
 				if (content == "" || content == null)
 					content=R.get('OCR_NO_DATA');
-
 				contentTxt.textFlow=TextConverter.importToFlow('<b>Content: </b>' + content, TextConverter.TEXT_FIELD_HTML_FORMAT)
 
 			}
@@ -127,6 +138,8 @@
 
 			private function onTranslate(e:Event):void
 			{
+        if(!mainView)
+          return;
 				if (mainView.translation)
 				{
 					//Show translated OCR content
@@ -335,8 +348,8 @@
 							includeInLayout="{evidence.data.type=='open'}"/>
 
 	<s:Line width="100%"
-					visible="{evidence.data.type=='open'}"
-					includeInLayout="{evidence.data.type=='open'}">
+					visible="{evidence.data.type=='capture'}"
+					includeInLayout="{evidence.data.type=='capture'}">
 		<s:stroke>
 			<s:SolidColorStroke color="0xCCCCCC"/>
 		</s:stroke>
@@ -345,12 +358,12 @@
 							width="100%"
 							textFlow="{TextConverter.importToFlow('&lt;b&gt;'+R.get('CONTENT')+': &lt;/b&gt;'+content, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
 							fontSize="12"
-							visible="{evidence.data.type=='open'}"
-							includeInLayout="{evidence.data.type=='open'}"/>
+							visible="{evidence.data.type=='capture'}"
+							includeInLayout="{evidence.data.type=='capture'}"/>
 	<s:RichText id="translationTxt"
 							width="100%"
 							textFlow="{TextConverter.importToFlow('&lt;i&gt;&lt;b&gt;'+R.get('CONTENT')+': &lt;/b&gt;'+translation+'&lt;/i&gt;', TextConverter.TEXT_FIELD_HTML_FORMAT)}"
 							fontSize="12"
-							visible="{evidence.data.type=='open'}"
-							includeInLayout="{evidence.data.type=='open'}"/>
+							visible="{evidence.data.type=='capture'}"
+							includeInLayout="{evidence.data.type=='capture'}"/>
 </s:BorderContainer>

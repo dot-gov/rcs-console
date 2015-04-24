@@ -28,6 +28,9 @@
       [Embed(source='/img/NEW/device/soldier.png')]
       private static const soldierIcon:Class;
       
+      [Embed(source='/img/NEW/device/proxed.png')]
+      private static const proxedIcon:Class;
+      
       [Embed(source='/img/NEW/evidence_50.png')]
       private static const evidenceIcon:Class;
       
@@ -177,6 +180,7 @@
     <s:Image id="iconType" top="5" horizontalCenter="0"/>
     <s:Image source="{compassIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='scout' &amp;&amp; data._kind=='agent'}" />
     <s:Image source="{soldierIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='soldier'}"/>
+    <s:Image source="{proxedIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='proxed'}"/>
   </s:Group>
  
   

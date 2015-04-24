@@ -282,6 +282,7 @@
 				section.stateManager.searchField=searchInput;
 				section.stateManager.view.refresh();
 				section.stateManager.tableView.refresh()
+        section.stateManager.update()
 			}
 
 			private function importEvidence(event:MouseEvent):void

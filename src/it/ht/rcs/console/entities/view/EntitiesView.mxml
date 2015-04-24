@@ -56,6 +56,7 @@
 
 			private function init():void
 			{
+				trace("[Entities View]: >>> init")
 				if (!LicenseManager.instance.intelligence)
 				{
 					while (views.numChildren > 2)
@@ -64,8 +65,27 @@
 					}
 
 				}
-				FlexGlobals.topLevelApplication.addEventListener(RefreshEvent.REFRESH, onRefresh);
-				//PushController.instance.addEventListener(PushEvent.ENTITY, onEntityPush); 
+				views.selectedIndex=0 //links
+
+				onChangeView()
+
+
+			/*
+			section.stateManager.view.refresh();
+			section.stateManager.tableView.refresh();
+			*/
+
+
+			/*  if (linkMap) //redundant TODO!!!!
+			 {
+				 linkMap.addListeners();
+				 linkMap.entities=section.stateManager.view;
+				linkMap.draw();
+			 }  */
+
+
+				 //FlexGlobals.topLevelApplication.addEventListener(RefreshEvent.REFRESH, onRefresh);
+				 //PushController.instance.addEventListener(PushEvent.ENTITY, onEntityPush); 
 			}
 
 			private function onEntityPush(e:PushEvent):void
@@ -90,37 +110,42 @@
 
 			protected function onAddedToStage():void
 			{
-				trace("Entities View Added to Stage");
-
-				FlexGlobals.topLevelApplication.addEventListener(RefreshEvent.REFRESH, onRefresh);
-				EntityManager.instance.listenPush()
-				PushController.instance.addEventListener(PushEvent.ENTITY, onEntityPush);
-				EntityManager.instance.addEventListener(DataLoadedEvent.DATA_LOADED, onChangeView)
-				EntityManager.instance.refresh();
-
-				/* 	if (linkMap)
-						linkMap.inited=false;
-					onChangeView(); */
+				trace("[Entities View]: >>> AddedToStage")
 				onChangeView()
+				//FlexGlobals.topLevelApplication.addEventListener(RefreshEvent.REFRESH, onRefresh);
+				//EntityManager.instance.listenPush()
+				//PushController.instance.addEventListener(PushEvent.ENTITY, onEntityPush);
+				//EntityManager.instance.addEventListener(DataLoadedEvent.DATA_LOADED, onChangeView)
+				//EntityManager.instance.refresh();
+
+			/* 	if (linkMap)
+					linkMap.inited=false;
+				onChangeView(); */
+				//onChangeView()
 			}
 
 			protected function onRemovedFromStage():void
 			{
-				FlexGlobals.topLevelApplication.removeEventListener(RefreshEvent.REFRESH, onRefresh);
-				EntityManager.instance.unlistenPush()
-				PushController.instance.removeEventListener(PushEvent.ENTITY, onEntityPush);
-				EntityManager.instance.removeEventListener(DataLoadedEvent.DATA_LOADED, onChangeView)
+				trace("[Entities View]: >>> RemovedFromStage")
 
-				if (linkMap)
-					linkMap.removeListeners();
-				if (geoMap)
-					geoMap.removeListeners();
+			/* 			FlexGlobals.topLevelApplication.removeEventListener(RefreshEvent.REFRESH, onRefresh);
+						EntityManager.instance.unlistenPush()
+						PushController.instance.removeEventListener(PushEvent.ENTITY, onEntityPush);
+						EntityManager.instance.removeEventListener(DataLoadedEvent.DATA_LOADED, onChangeView)
+
+						if (linkMap)
+							linkMap.removeListeners();
+						if (geoMap)
+							geoMap.removeListeners(); */
 
 			}
 
 			public function onChangeView(e:Event=null):void
 			{
-				trace("Entities >> CHANGE VIEW")
+				trace("[Entities View]: >>> ChangeView: " + views.selectedIndex)
+
+
+
 				if (geoMap)
 					geoMap.doStop();
 
@@ -165,7 +190,9 @@
 						section.stateManager.hideGroups=false;
 						section.stateManager.view.refresh();
 						section.stateManager.tableView.refresh();
+
 						actionbar.currentState=LINKMAP;
+
 						if (linkMap) //redundant TODO!!!!
 						{
 							linkMap.addListeners();
@@ -240,8 +267,9 @@
 
 			private function onDataLoaded(e:DataLoadedEvent):void
 			{
+				trace("Entities view data loaded")
 				EntityManager.instance.removeEventListener(DataLoadedEvent.DATA_LOADED, onDataLoaded)
-				onChangeView()
+				//onChangeView()
 			}
 
 			protected function onLinkRemoved():void
@@ -271,17 +299,17 @@
 
 			protected function onEntityCreated():void
 			{
-				onChangeView()
+				//onChangeView()
 			}
 
 			protected function onEntityDeleted():void
 			{
-				onChangeView()
+				//onChangeView()
 			}
 
 			protected function onEntityUpdated():void
 			{
-				onChangeView()
+				//onChangeView()
 			}
 
 			protected function onGroup():void
@@ -349,8 +377,7 @@
 								width="100%"
 								height="100%"
 								creationPolicy="all"
-								change="onChangeView()"
-								creationComplete="onChangeView()">
+								change="onChangeView(event)">
 
 		<s:NavigatorContent label="{R.get('LINK_MAP')}"
 												hideEffect="{fadeOut}"

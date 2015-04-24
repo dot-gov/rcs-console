@@ -150,9 +150,7 @@ package it.ht.rcs.console.entities.view.renderers
         numBalls=2;
       else if (count > 50)
         numBalls=3;
-      
 
-      
       var flowRenderer:Sprite;
       var i:int;
       var increment:Number=0

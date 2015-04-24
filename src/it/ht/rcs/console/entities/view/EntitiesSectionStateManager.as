@@ -230,11 +230,10 @@ package it.ht.rcs.console.entities.view
 				case 'singleOperation':
 					selectedEntity=null;
 					//selectedTarget = null; selectedAgent = null; selectedFactory = null; selectedConfig = null;
-					CurrentManager=EntityManager;
-					currentFilter=singleOperationFilterFunction;
-					update();
-					section.currentState='singleOperation';
-
+					CurrentManager=EntityManager;	
+          currentFilter=singleOperationFilterFunction;
+          update();
+          section.currentState='singleOperation';
 					break;
 
 				case 'singleEntity':
@@ -334,7 +333,6 @@ package it.ht.rcs.console.entities.view
 			var lcv:ListCollectionView;
 			if (currentState == 'singleOperation')
 			{
-				trace("singleOperation")
 				lcv=new ListCollectionView()
 				var entities:ListCollectionView=EntityManager.instance.getView(null, currentFilter) //sort + filter
 
@@ -344,9 +342,7 @@ package it.ht.rcs.console.entities.view
 				{
 					items.push(entities.getItemAt(i));
 				}
-
 				lcv.list=new ArrayList(items);
-
 			}
 
 			else if (CurrentManager != null)

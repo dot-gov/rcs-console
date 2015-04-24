@@ -10,7 +10,7 @@
     
     private function init():void
     {
-      this.addEventListener(MouseEvent.CLICK, onClick)
+    this.addEventListener(MouseEvent.CLICK, onClick)
     }
    
     public var section:Section;

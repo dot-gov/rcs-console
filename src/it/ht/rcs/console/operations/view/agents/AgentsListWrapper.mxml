@@ -32,6 +32,8 @@
 			[Bindable]
 			public var section:Section;
 
+      
+      [Bindable]
 			private var _selectedItem:Object;
 
 			private var lists:Array=new Array()
@@ -105,6 +107,7 @@
       {
       return _selectedItem;
       }
+      
       public function set selectedItem(value:Object):void
       {
         _selectedItem=value;

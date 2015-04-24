@@ -1,4 +1,4 @@
-#Thu May 24 10:59:54 CEST 2012
+#Fri Mar 27 15:36:03 CET 2015
 ASRearr_AddDefaultHeaderForProperties=1
 ASRearr_AddDefaultHeaderForStaticProperties=1
 ASRearr_BlankLinesBeforeElement=
@@ -28,7 +28,7 @@ ASRearr_ModifierOrder_Property=<Namespace>,override,native,public,private,protec
 ASRearr_MoveImportsOutsideClass=true
 ASRearr_RemoveExistingCopyrightHeaders=false
 ASRearr_RemoveExistingSectionHeaders=false
-ASRearr_SectionHeaderMap=\#\n\#Thu May 24 10\:59\:54 CEST 2012\n
+ASRearr_SectionHeaderMap=\#\n\#Fri Mar 27 15\:36\:03 CET 2015\n
 ASRearr_SortGettersAndSettersWithAssociatedProperties=true
 ASRearr_SortGettersAndSettersWithAssociatedStaticProperties=true
 ASRearr_UseCopyrightGeneration=false

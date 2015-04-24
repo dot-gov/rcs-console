@@ -9,6 +9,9 @@ package it.ht.rcs.console.operations.view.configuration.advanced.renderers
     [Embed(source='/img/modules/application.png')]
     public static const application:Class;
     
+    [Embed(source='/img/modules/backup.png')]
+    public static const backup:Class;
+    
     [Embed(source='/img/modules/calendar.png')]
     public static const calendar:Class;
     
