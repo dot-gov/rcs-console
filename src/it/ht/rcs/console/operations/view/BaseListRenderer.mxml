@@ -180,7 +180,7 @@
     <s:Image id="iconType" top="5" horizontalCenter="0"/>
     <s:Image source="{compassIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='scout' &amp;&amp; data._kind=='agent'}" />
     <s:Image source="{soldierIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='soldier'}"/>
-    <s:Image source="{proxedIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='proxed'}"/>
+    <s:Image source="{proxedIcon}" x="54" y="25" visible="{data &amp;&amp; data.hasOwnProperty('level') &amp;&amp; data.level=='proxied'}"/>
   </s:Group>
  
   

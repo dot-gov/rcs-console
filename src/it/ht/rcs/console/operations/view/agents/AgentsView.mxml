@@ -14,11 +14,14 @@
 			import it.ht.rcs.console.agent.controller.AgentManager;
 			import it.ht.rcs.console.operations.view.OperationsSection;
 			import it.ht.rcs.console.operations.view.OperationsSectionStateManager;
+			import it.ht.rcs.console.target.model.Target;
 
 			import locale.R;
 
 			[Bindable]
 			public var section:OperationsSection;
+
+			private var lastTarget:Target;
 
 
 			private function onDoubleClick(event:MouseEvent):void
@@ -60,37 +63,42 @@
 
 			protected function onAddeToStage(event:Event):void
 			{
-        if (list)
-          list.clear();
-        section.stateManager.addEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
+				if (lastTarget != section.stateManager.selectedTarget)
+				{
+					lastTarget=section.stateManager.selectedTarget
+					if (list)
+					{
+						list.clear();
+					}
+				}
+
+				section.stateManager.addEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
 				//AgentManager.instance.refresh();
 				AgentManager.instance.listenAgentPush();
-        AgentManager.instance.listenFactoryPush()
+				AgentManager.instance.listenFactoryPush()
 			}
 
 			private function onUpdate(e:Event):void
 			{
-				list.draw(section.stateManager.idents)//
-        scroller.viewport.verticalScrollPosition=0;
+				list.draw(section.stateManager.idents) //
+				scroller.viewport.verticalScrollPosition=0;
 			}
 
 
 			protected function onRemovedFromStage(event:Event):void
 			{
 				AgentManager.instance.unlistenAgentPush()
-        AgentManager.instance.unlistenFactoryPush()
+				AgentManager.instance.unlistenFactoryPush()
 				section.stateManager.removeEventListener(OperationsSectionStateManager.UPDATE, onUpdate)
 			}
-      
-      private function onListChange():void
-      {
 
-        customTypesList.selectedIndex=-1
-        customTypesList.validateNow()
-        
-      }
-      
+			private function onListChange():void
+			{
 
+				customTypesList.selectedIndex=-1
+				customTypesList.validateNow()
+
+			}
 		]]>
 	</fx:Script>
 
@@ -121,8 +129,7 @@
 												 doubleClick="onDoubleClick(event)"
 												 keyUp="onKeyUp(event)"
 												 height="120"
-												 change="{list.selectedItem=null}"
-												/>
+												 change="{list.selectedItem=null}"/>
 					<s:Line width="100%"
 									visible="{section.currentState=='singleTarget'}"
 									includeInLayout="{section.currentState=='singleTarget'}">
@@ -131,16 +138,19 @@
 						</s:stroke>
 					</s:Line>
 					<s:Scroller width="100%"
-											height="100%"  visible="{section.currentState=='singleTarget'}"
-                      includeInLayout="{section.currentState=='singleTarget'}" id="scroller">
+											height="100%"
+											visible="{section.currentState=='singleTarget'}"
+											includeInLayout="{section.currentState=='singleTarget'}"
+											id="scroller">
 						<s:VGroup height="100%"
 											width="100%"
 											clipAndEnableScrolling="true">
 							<agents:AgentsListWrapper id="list"
-																		width="100%"
-																		selectedItem="{grid.selectedItem}"
-																		change="onListChange()" doubleClickEnabled="true" doubleClick="onDoubleClick(event)"
-																		/>
+																				width="100%"
+																				selectedItem="{grid.selectedItem}"
+																				change="onListChange()"
+																				doubleClickEnabled="true"
+																				doubleClick="onDoubleClick(event)"/>
 						</s:VGroup>
 					</s:Scroller>
 

@@ -5,50 +5,52 @@
 					xmlns:filesystem="it.ht.rcs.console.operations.view.filesystem.*"
 					width="100%"
 					height="100%"
+					creationComplete="init()"
 					removedFromStage="onRemovedFromStage()"
 					addedToStage="onAddedToStage()">
 
 	<fx:Script>
 		<![CDATA[
-      import it.ht.rcs.console.agent.controller.AgentManager;
-      import it.ht.rcs.console.agent.model.Agent;
-      import it.ht.rcs.console.dashboard.view.renderer.Icons;
-      import it.ht.rcs.console.events.RefreshEvent;
-      import it.ht.rcs.console.evidence.controller.EvidenceManager;
-      import it.ht.rcs.console.evidence.model.Evidence;
-      import it.ht.rcs.console.operations.view.OperationsSection;
-      import it.ht.rcs.console.push.PushController;
-      import it.ht.rcs.console.push.PushEvent;
-      import it.ht.rcs.console.target.model.Target;
-      import it.ht.rcs.console.utils.Size;
-      import it.ht.rcs.console.utils.TimeUtils;
-      
-      import locale.R;
-      
-      import mx.collections.ArrayCollection;
-      import mx.collections.ArrayList;
-      import mx.collections.HierarchicalCollectionView;
-      import mx.collections.HierarchicalData;
-      import mx.collections.IHierarchicalCollectionView;
-      import mx.collections.IViewCursor;
-      import mx.collections.ListCollectionView;
-      import mx.controls.advancedDataGridClasses.AdvancedDataGridColumn;
-      import mx.core.FlexGlobals;
-      import mx.events.AdvancedDataGridEvent;
-      import mx.events.CollectionEvent;
-      import mx.events.ListEvent;
-      import mx.rpc.events.ResultEvent;
-      import mx.utils.ObjectUtil;
+			import it.ht.rcs.console.agent.controller.AgentManager;
+			import it.ht.rcs.console.agent.model.Agent;
+			import it.ht.rcs.console.dashboard.view.renderer.Icons;
+			import it.ht.rcs.console.events.RefreshEvent;
+			import it.ht.rcs.console.evidence.controller.EvidenceManager;
+			import it.ht.rcs.console.evidence.model.Evidence;
+			import it.ht.rcs.console.operations.view.OperationsSection;
+			import it.ht.rcs.console.push.PushController;
+			import it.ht.rcs.console.push.PushEvent;
+			import it.ht.rcs.console.target.model.Target;
+			import it.ht.rcs.console.utils.Size;
+			import it.ht.rcs.console.utils.TimeUtils;
+
+			import locale.R;
+
+			import mx.collections.ArrayCollection;
+			import mx.collections.ArrayList;
+			import mx.collections.HierarchicalCollectionView;
+			import mx.collections.HierarchicalData;
+			import mx.collections.IHierarchicalCollectionView;
+			import mx.collections.IViewCursor;
+			import mx.collections.ListCollectionView;
+			import mx.controls.advancedDataGridClasses.AdvancedDataGridColumn;
+			import mx.core.FlexGlobals;
+			import mx.events.AdvancedDataGridEvent;
+			import mx.events.CollectionEvent;
+			import mx.events.ListEvent;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.ObjectUtil;
 
 			[Bindable]
 			public var section:OperationsSection;
 
 			[Bindable]
 			private var hcv:HierarchicalData;
-      
-      
-      private var lastTarget:Target;
-      private var lastAgent:Agent;
+
+
+			private var lastTarget:Target;
+			private var lastAgent:Agent;
 
 
 			private var vScroll:int=0;
@@ -119,9 +121,9 @@
 
 				trace("index: " + vScroll);
 				var item:FileSystemItem=e.item as FileSystemItem;
-        
-        item.updated=false;
-        item.pending=false;
+
+				item.updated=false;
+				item.pending=false;
 
 				grid.selectedItems=[item];
 				actionBar.selectedObject=grid.selectedItems[0];
@@ -135,9 +137,10 @@
 					{
 						EvidenceManager.instance.filesystem(section.stateManager.selectedTarget._id, item.agent._id, null, item.update);
 					}
-					else   //only if incomplete == true
+					else //only if incomplete == true
 					{
-						if(item.incomplete) EvidenceManager.instance.filesystem(section.stateManager.selectedTarget._id, item.aid, item.path, item.update);
+						if (item.incomplete)
+							EvidenceManager.instance.filesystem(section.stateManager.selectedTarget._id, item.aid, item.path, item.update);
 
 					}
 				}
@@ -157,21 +160,21 @@
 					{
 						cursor.current["updated"]=true;
 						cursor.current["pending"]=false;
-            cursor.current["children"]=[{name: "retrieving data...", scanning: true}]
-            grid.expandItem(cursor.current,false)
+						cursor.current["children"]=[{name: "retrieving data...", scanning: true}]
+						grid.expandItem(cursor.current, false)
 
 					}
-          if (cursor.current["attr"] == SUBROOT && cursor.current["aid"] == e.data.aid)
-          {
-            cursor.current["updated"]=true;
-            cursor.current["pending"]=false;
-            if(cursor.current["children"].length==0 || !cursor.current["children"])
-            {
-              cursor.current["children"]=[{name: "retrieving data...", scanning: true}];
-              grid.expandItem(cursor.current,false)
-            }
-             
-          }
+					if (cursor.current["attr"] == SUBROOT && cursor.current["aid"] == e.data.aid)
+					{
+						cursor.current["updated"]=true;
+						cursor.current["pending"]=false;
+						if (cursor.current["children"].length == 0 || !cursor.current["children"])
+						{
+							cursor.current["children"]=[{name: "retrieving data...", scanning: true}];
+							grid.expandItem(cursor.current, false)
+						}
+
+					}
 					cursor.moveNext();
 				}
 			}
@@ -386,25 +389,25 @@
 				if (!item)
 					return null;
 
-      
+
 				if (item.hasOwnProperty("scanning") && item.scanning)
 					return Icons.scanningIcon;
-        
-        if(item.path)
-        {
-        if (item.path=="cloud:")
-          return Icons.cloud;
-        
-        else if(item.path=="cloud:\\GoogleDrive")
-          return Icons.gdrive;
-        
-        else if(item.path=="cloud:\\OneDrive")
-          return Icons.onedrive;
-        
-        else if(item.path=="cloud:\\Dropbox")
-          return Icons.dropbox;
-        }
-   
+
+				if (item.path)
+				{
+					if (item.path == "cloud:")
+						return Icons.cloud;
+
+					else if (item.path == "cloud:\\GoogleDrive")
+						return Icons.gdrive;
+
+					else if (item.path == "cloud:\\OneDrive")
+						return Icons.onedrive;
+
+					else if (item.path == "cloud:\\Dropbox")
+						return Icons.dropbox;
+				}
+
 				// if (item.hasOwnProperty('children')) {
 				switch (item.attr)
 				{
@@ -428,30 +431,47 @@
 
 			private function onAddedToStage():void
 			{
-        
-        var currentTarget:Target =section.stateManager.selectedTarget
-        var currentAgent:Agent=section.stateManager.selectedAgent;
-        
-        
+				this.currentState="list"
+
+				var currentTarget:Target=section.stateManager.selectedTarget
+				var currentAgent:Agent=section.stateManager.selectedAgent;
+
+
 				FlexGlobals.topLevelApplication.addEventListener(RefreshEvent.REFRESH, showTree);
-        
-        if(lastTarget!=currentTarget || lastAgent!= currentAgent)
-        {
-          grid.dataProvider=null;
-          lastTarget=currentTarget
-          lastAgent=currentAgent
-          if (grid)
-            showTree();
-        }
-			
+
+				if (lastTarget != currentTarget || lastAgent != currentAgent)
+				{
+					lastTarget=currentTarget
+					lastAgent=currentAgent
+
+					if (grid)
+					{
+						grid.dataProvider=null;
+						showTree();
+					}
+				}
+
+
 
 				PushController.instance.addEventListener(PushEvent.FILESYSTEM, onPush);
 			}
 
+			private function init():void
+			{
+				if (stage)
+				{
+					lastTarget=null
+					lastAgent=null
+					onAddedToStage()
+				}
+
+			}
+
+
 			private function onRemovedFromStage():void
 			{
 				FlexGlobals.topLevelApplication.removeEventListener(RefreshEvent.REFRESH, showTree);
-				
+
 
 				PushController.instance.removeEventListener(PushEvent.ENTITY, onPush);
 			}
@@ -511,15 +531,61 @@
 				}
 				return {color: 0x000000}
 			}
+
+			protected function onSearch():void
+			{
+
+				if (searchInput.text == "" || searchInput.text == null)
+					return;
+				var currentTarget:Target=section.stateManager.selectedTarget;
+				var currentAgent:Agent=section.stateManager.selectedAgent;
+				var keywords:String=searchInput.text;
+				EvidenceManager.instance.filesystem_search(currentTarget._id, currentAgent._id, keywords, 0, onSearchResult, onSearchFault)
+			}
+
+			private function onSearchResult(e:ResultEvent):void
+			{
+				trace("search in filesystem result")
+				this.currentState="search"
+				searchResultsDg.dataProvider=e.result.entries;
+			}
+
+			private function onSearchFault(e:FaultEvent):void
+			{
+				trace("search in filesystem fault")
+			}
+
+			private function formatDate(item:Object, column:GridColumn):String
+			{
+				return TimeUtils.timestampFormatter(item[column.dataField] * 1000);
+			}
+
+
+
+			private function formatSize(item:Object, column:GridColumn):String
+			{
+				return Size.toHumanBytes(item[column.dataField])
+			}
 		]]>
 	</fx:Script>
+
+	<s:states>
+		<s:State name="list"/>
+		<s:State name="search"/>
+	</s:states>
 
 	<filesystem:FileSystemActionBar id="actionBar"
 																	section="{section}"/>
 
 	<!--mx:Tree id="tree" width="100%" height="100%" allowMultipleSelection="false" borderVisible="false"
 					 labelField="name" showRoot="true"/-->
-
+	<s:HGroup width="100%"
+						horizontalAlign="right">
+		<s:TextInput id="searchInput"/>
+		<s:Button id="searchButton"
+							label="{R.get('SEARCH')}"
+							click="onSearch()"/>
+	</s:HGroup>
 	<mx:AdvancedDataGrid id="grid"
 											 width="100%"
 											 height="100%"
@@ -531,7 +597,8 @@
 											 dataProvider="{hcv}"
 											 dataTipFunction="setToolTip"
 											 doubleClickEnabled="true"
-											 itemDoubleClick="openItem(event)">
+											 itemDoubleClick="openItem(event)"
+											 excludeFrom="search">
 		<mx:columns>
 
 			<mx:AdvancedDataGridColumn dataField="name"
@@ -539,8 +606,7 @@
 																 headerText="{R.get('PATH')}"
 																 showDataTips="true"
 																 sortable="false"
-																 styleFunction="setColumnStyle"
-                                 />
+																 styleFunction="setColumnStyle"/>
 			<mx:AdvancedDataGridColumn dataField="pending"
 																 headerText="..."
 																 itemRenderer="it.ht.rcs.console.operations.view.filesystem.renderers.PendingItemRenderer"
@@ -567,5 +633,31 @@
 
 		</mx:columns>
 	</mx:AdvancedDataGrid>
+	<s:DataGrid id="searchResultsDg"
+							includeIn="search"
+							width="100%"
+							height="100%">
+		<s:columns>
+			<s:ArrayList>
 
+				<s:GridColumn width="40"
+											dataField="attr"
+											headerText="Attr"/>
+				<s:GridColumn width="300"
+											dataField="name"
+											headerText="Name"/>
+				<s:GridColumn dataField="path"
+											headerText="Path"/>
+				<s:GridColumn width="150"
+											dataField="date"
+											headerText="Date"
+											labelFunction="formatDate"/>
+				<s:GridColumn width="150"
+											dataField="size"
+											headerText="Size"
+											labelFunction="formatSize"/>
+
+			</s:ArrayList>
+		</s:columns>
+	</s:DataGrid>
 </s:VGroup>
