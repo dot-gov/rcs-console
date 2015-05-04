@@ -17,6 +17,7 @@
 			import it.ht.rcs.console.events.RefreshEvent;
 			import it.ht.rcs.console.evidence.controller.EvidenceManager;
 			import it.ht.rcs.console.evidence.model.Evidence;
+			import it.ht.rcs.console.evidence.model.FileSystemSearchResult;
 			import it.ht.rcs.console.operations.view.OperationsSection;
 			import it.ht.rcs.console.push.PushController;
 			import it.ht.rcs.console.push.PushEvent;
@@ -51,6 +52,9 @@
 
 			private var lastTarget:Target;
 			private var lastAgent:Agent;
+			private var searchKey:String
+			private var searchIndex:int
+			private var searchLimit:int
 
 
 			private var vScroll:int=0;
@@ -147,6 +151,7 @@
 			}
 
 
+
 			private function onPush(e:PushEvent):void
 			{
 				var path:String=e.data.path;
@@ -229,7 +234,7 @@
 
 			}
 
-			//this is the old method to retrieve all data togheter
+			//this is the old method to retrieve all data 
 			/*
 			 private function onResult(event:ResultEvent):void
 			 {
@@ -471,8 +476,6 @@
 			private function onRemovedFromStage():void
 			{
 				FlexGlobals.topLevelApplication.removeEventListener(RefreshEvent.REFRESH, showTree);
-
-
 				PushController.instance.removeEventListener(PushEvent.ENTITY, onPush);
 			}
 
@@ -532,22 +535,65 @@
 				return {color: 0x000000}
 			}
 
-			protected function onSearch():void
+			protected function doSearch(keywords:String, start:int):void
+			{
+				if (searchResultsDg)
+					searchResultsDg.dataProvider=null;
+				if (resultBox)
+					resultBox.visible=false
+				if (spinner)
+					spinner.visible=true;
+				var currentTarget:Target=section.stateManager.selectedTarget;
+				var currentAgent:Agent=section.stateManager.selectedAgent;
+				EvidenceManager.instance.filesystem_search(currentTarget._id, currentAgent._id, keywords, start, onSearchResult, onSearchFault)
+			}
+
+			protected function onNewSearch():void
 			{
 
 				if (searchInput.text == "" || searchInput.text == null)
 					return;
-				var currentTarget:Target=section.stateManager.selectedTarget;
-				var currentAgent:Agent=section.stateManager.selectedAgent;
+				searchKey=searchInput.text
 				var keywords:String=searchInput.text;
-				EvidenceManager.instance.filesystem_search(currentTarget._id, currentAgent._id, keywords, 0, onSearchResult, onSearchFault)
+				doSearch(keywords, 0)
 			}
 
 			private function onSearchResult(e:ResultEvent):void
 			{
 				trace("search in filesystem result")
+				if (spinner)
+					spinner.visible=false;
+				var result:FileSystemSearchResult=e.result as FileSystemSearchResult
+				searchIndex=result.start
+				searchLimit=result.limit
 				this.currentState="search"
-				searchResultsDg.dataProvider=e.result.entries;
+				searchResultsDg.dataProvider=result.entries;
+				resultBox.visible=true
+				resultTxt.text="Found " + result.total + " items. Showing page " + result.page + " of " + result.pages
+
+				if (result.page == 1 || (result.pages < 2))
+					prevBtn.visible=false;
+				else
+					prevBtn.visible=true;
+
+				if (result.page == result.pages || (result.pages < 2))
+					nextBtn.visible=false;
+				else
+					nextBtn.visible=true;
+			}
+
+			private function searchNext():void
+			{
+				var currentTarget:Target=section.stateManager.selectedTarget;
+				var currentAgent:Agent=section.stateManager.selectedAgent;
+				doSearch(searchKey, searchIndex + searchLimit)
+			}
+
+			private function searchPrev():void
+			{
+				var currentTarget:Target=section.stateManager.selectedTarget;
+				var currentAgent:Agent=section.stateManager.selectedAgent;
+				doSearch(searchKey, searchIndex - searchLimit)
 			}
 
 			private function onSearchFault(e:FaultEvent):void
@@ -566,6 +612,27 @@
 			{
 				return Size.toHumanBytes(item[column.dataField])
 			}
+
+			private function jumpToTree():void
+			{
+				this.currentState="list"
+				var item:it.ht.rcs.console.agent.model.FileSystemItem=searchResultsDg.selectedItem as it.ht.rcs.console.agent.model.FileSystemItem;
+				var dp:IHierarchicalCollectionView=grid.hierarchicalCollectionView;
+				var cursor:IViewCursor=dp.createCursor();
+				//get nodes!
+				while (!cursor.afterLast)
+				{
+
+					if (cursor.current["path"] == item.path)
+					{
+						trace("append to path")
+						return;
+					}
+
+					cursor.moveNext();
+				}
+				trace("create path")
+			}
 		]]>
 	</fx:Script>
 
@@ -575,16 +642,35 @@
 	</s:states>
 
 	<filesystem:FileSystemActionBar id="actionBar"
+																	state="{this.currentState}"
 																	section="{section}"/>
 
 	<!--mx:Tree id="tree" width="100%" height="100%" allowMultipleSelection="false" borderVisible="false"
 					 labelField="name" showRoot="true"/-->
 	<s:HGroup width="100%"
-						horizontalAlign="right">
+						horizontalAlign="right"
+						verticalAlign="middle"
+						visible="{section.stateManager.selectedAgent!=null}"
+						includeInLayout="{section.stateManager.selectedAgent!=null}">
+		<s:HGroup id="spinner"
+							visible="false"
+							left="6"
+							top="6"
+							bottom="6"
+							right="6"
+							verticalAlign="middle">
+
+			<s:SWFLoader source="@Embed('/img/evidence/spinner16.swf')"
+									 alpha="0.7"/>
+			<s:Label text="search in progress"/>
+		</s:HGroup>
+		<s:Spacer width="100%"/>
+
+
 		<s:TextInput id="searchInput"/>
 		<s:Button id="searchButton"
 							label="{R.get('SEARCH')}"
-							click="onSearch()"/>
+							click="onNewSearch()"/>
 	</s:HGroup>
 	<mx:AdvancedDataGrid id="grid"
 											 width="100%"
@@ -633,31 +719,48 @@
 
 		</mx:columns>
 	</mx:AdvancedDataGrid>
-	<s:DataGrid id="searchResultsDg"
-							includeIn="search"
-							width="100%"
-							height="100%">
-		<s:columns>
-			<s:ArrayList>
 
-				<s:GridColumn width="40"
-											dataField="attr"
-											headerText="Attr"/>
-				<s:GridColumn width="300"
-											dataField="name"
-											headerText="Name"/>
-				<s:GridColumn dataField="path"
-											headerText="Path"/>
-				<s:GridColumn width="150"
-											dataField="date"
-											headerText="Date"
-											labelFunction="formatDate"/>
-				<s:GridColumn width="150"
-											dataField="size"
-											headerText="Size"
-											labelFunction="formatSize"/>
+	<s:VGroup width="100%"
+						height="100%"
+						includeIn="search">
+		<s:DataGrid id="searchResultsDg"
+								width="100%"
+								doubleClickEnabled="true"
+								height="100%"
+								doubleClick="jumpToTree()">
+			<s:columns>
+				<s:ArrayList>
 
-			</s:ArrayList>
-		</s:columns>
-	</s:DataGrid>
+					<s:GridColumn headerText="Name"
+												itemRenderer="it.ht.rcs.console.operations.view.filesystem.renderers.SearchResultRenderer"/>
+					<s:GridColumn width="130"
+												dataField="date"
+												headerText="Date"
+												labelFunction="formatDate"/>
+					<s:GridColumn width="100"
+												dataField="size"
+												headerText="Size"
+												labelFunction="formatSize"/>
+
+				</s:ArrayList>
+			</s:columns>
+		</s:DataGrid>
+		<s:HGroup id="resultBox"
+							horizontalAlign="center"
+							verticalAlign="middle"
+							top="10"
+							bottom="10"
+							width="100%">
+			<s:Label id="resultTxt"
+							 fontWeight="bold"/>
+			<s:Spacer width="100%"/>
+			<s:Button label="Previous"
+								id="prevBtn"
+								click="searchPrev()"/>
+
+			<s:Button label="Next"
+								id="nextBtn"
+								click="searchNext()"/>
+		</s:HGroup>
+	</s:VGroup>
 </s:VGroup>

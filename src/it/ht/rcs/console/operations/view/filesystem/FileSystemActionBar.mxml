@@ -10,7 +10,7 @@
 
 	<s:Button label="{R.get('DOWNLOAD_FILE')}"
 						click="onDownload(event)"
-						enabled="{selectedObject!= null &amp;&amp; selectedObject.attr == FileSystemView.FILE &amp;&amp;  sameType(selectedObjects) &amp;&amp; isItemOpened() &amp;&amp; !selectedObject.isCloud()}"
+						enabled="{selectedObject!= null &amp;&amp; selectedObject.attr == FileSystemView.FILE &amp;&amp;  sameType(selectedObjects) &amp;&amp; isItemOpened() &amp;&amp; !selectedObject.isCloud() &amp;&amp; state!='search'}"
 						icon="@Embed('/img/NEW/download.png')"/>
 
 	<s:Button label="{R.get('RETRIEVE_TREE')}"
@@ -18,13 +18,13 @@
 						enabled="{selectedObject != null &amp;&amp; (selectedObject.attr == FileSystemView.EMPTY_FOLDER ||
                                                          selectedObject.attr == FileSystemView.FULL_FOLDER  ||
                                                          selectedObject.attr == FileSystemView.SUBROOT)
-                                              &amp;&amp; haveTree(selectedObjects) &amp;&amp; isItemOpened() &amp;&amp; !selectedObject.isCloud()
+                                              &amp;&amp; haveTree(selectedObjects) &amp;&amp; isItemOpened() &amp;&amp; !selectedObject.isCloud() &amp;&amp; state!='search'
             }"
 						icon="@Embed('/img/NEW/folderplus32.png')"/>
 
 	<s:Button label="{R.get('RETRIEVE_DEFAULT')}"
 						click="onRetrieveDefault(event)"
-						enabled="{selectedObject != null &amp;&amp; (selectedObject.attr == FileSystemView.SUBROOT) &amp;&amp; sameType(selectedObjects) &amp;&amp; isItemOpened()}"
+						enabled="{selectedObject != null &amp;&amp; (selectedObject.attr == FileSystemView.SUBROOT) &amp;&amp; sameType(selectedObjects) &amp;&amp; isItemOpened() &amp;&amp; state!='search'}"
 						icon="@Embed('/img/NEW/folder32.png')"/>
 
 	<actionbar:Separator/>
@@ -32,7 +32,7 @@
 	<s:Button label="{R.get('PENDING_REQUESTS')}"
 						icon="@Embed('/img/NEW/pending32.png')"
 						click="openPendingDialog()"
-						enabled="{Console.currentSession.user.is_tech() &amp;&amp; selectedObject != null &amp;&amp; selectedObject.attr == FileSystemView.SUBROOT}"/>
+						enabled="{Console.currentSession.user.is_tech() &amp;&amp; selectedObject != null &amp;&amp; selectedObject.attr == FileSystemView.SUBROOT &amp;&amp; state!='search'}"/>
 
 
 	<s:Spacer width="100%"/>
@@ -58,6 +58,9 @@
 
 			[Bindable]
 			public var selectedObjects:Array
+      
+      [Bindable]
+      public var state:String
 
 			public var deletedItems:Array;
 
