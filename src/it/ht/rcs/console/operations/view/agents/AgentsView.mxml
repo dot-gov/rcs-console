@@ -124,8 +124,8 @@
 									height="100%"
 									verticalAlign="top">
 					<view:BaseList id="customTypesList" 
-                         visible="{section.currentState=='singleTarget'}"
-                         includeInLayout="{section.currentState=='singleTarget'}"
+                         visible="{section.currentState=='singleTarget' || section.currentState=='singleAgent'}"
+                         includeInLayout="{section.currentState=='singleTarget' || section.currentState=='singleAgent'}"
 												 dataProvider="{section.stateManager.customTypes}"
 												 section="{section}"
 												 doubleClick="onDoubleClick(event)"
