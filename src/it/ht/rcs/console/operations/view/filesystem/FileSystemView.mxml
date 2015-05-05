@@ -686,7 +686,6 @@
 											 itemDoubleClick="openItem(event)"
 											 excludeFrom="search">
 		<mx:columns>
-
 			<mx:AdvancedDataGridColumn dataField="name"
 																 width="400"
 																 headerText="{R.get('PATH')}"

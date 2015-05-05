@@ -156,7 +156,8 @@
 
 	<s:TextInput id="searchInput"
 							 keyUp="onKeyUp(event)"
-							 removedFromStage="onRemovedFromStage()"/>
+							 removedFromStage="onRemovedFromStage()"
+               enabled="{!section.stateManager.selectedAgent}"/>
 
 
 	<fx:Script>

@@ -479,7 +479,7 @@ package it.ht.rcs.console.operations.view
 				tableView.refresh();
 			}
 
-			if (currentState == 'singleTarget')			{
+			if (currentState == 'singleTarget' || currentState == 'allAgents')			{
 				var i:int;
 				var identDictionary:Dictionary=new Dictionary()
 				for (i=0; i < view.length; i++)
