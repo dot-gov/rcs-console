@@ -339,9 +339,9 @@
 				return subroot;
 			}
 
-			private function getAppendToNode(a:Array, name:String):Object
+			private function getAppendToNode(a:Array, name:String):FileSystemItem
 			{
-				for each (var el:Object in a)
+				for each (var el:FileSystemItem in a)
 					if (el.name == name)
 						return el;
 				return null;
@@ -569,7 +569,13 @@
 				this.currentState="search"
 				searchResultsDg.dataProvider=result.entries;
 				resultBox.visible=true
-				resultTxt.text="Found " + result.total + " items. Showing page " + result.page + " of " + result.pages
+				if (result.total == 0)
+					resultTxt.text= R.get('SEARCH_NO_RESULTS')  
+
+				else
+        
+        resultTxt.text=R.get('SEARCH_RESULTS', [result.total, result.page, result.pages])
+					//resultTxt.text="Found " + result.total + " items. Showing page " + result.page + " of " + result.pages
 
 				if (result.page == 1 || (result.pages < 2))
 					prevBtn.visible=false;
@@ -615,23 +621,90 @@
 
 			private function jumpToTree():void
 			{
-				this.currentState="list"
-				var item:it.ht.rcs.console.agent.model.FileSystemItem=searchResultsDg.selectedItem as it.ht.rcs.console.agent.model.FileSystemItem;
-				var dp:IHierarchicalCollectionView=grid.hierarchicalCollectionView;
-				var cursor:IViewCursor=dp.createCursor();
-				//get nodes!
-				while (!cursor.afterLast)
-				{
 
-					if (cursor.current["path"] == item.path)
+			/* 		var item:it.ht.rcs.console.agent.model.FileSystemItem=searchResultsDg.selectedItem as it.ht.rcs.console.agent.model.FileSystemItem;
+					var dp:IHierarchicalCollectionView=grid.hierarchicalCollectionView;
+					var cursor:IViewCursor=dp.createCursor();
+					//get nodes!
+					var path:String=item.path;
+					path=path.replace('\\\\', '\\');
+					var separator:String=path.indexOf('/') == -1 ? '\\' : '/';
+					var tokens:Array=path.split(separator);
+					trace("=====================")
+					for (var i:int=0; i < tokens.length; i++)
 					{
-						trace("append to path")
-						return;
+						trace(tokens[i])
 					}
+					trace("=====================")
 
-					cursor.moveNext();
-				}
-				trace("create path")
+
+
+					//
+					while (!cursor.afterLast)
+					{
+						trace(cursor.current["path"])
+						if (cursor.current["path"] == item.path)
+						{
+
+							trace("append to path")
+							for (var c:int=0; c < cursor.current.children.length; c++)
+							{
+								var child:FileSystemItem=cursor.current.children[c] as FileSystemItem;
+								// if(child.path+child.name
+								if (isFolder(child))
+								{
+									trace("tree: " + child.path)
+								}
+								else
+								{
+									trace("tree: " + child.path + separator + child.name)
+								}
+								trace("current: " + item.path + separator + item.name)
+							}
+
+							return;
+						}
+
+						cursor.moveNext();
+					}
+					trace("create path")
+					var node:FileSystemItem=dp.source.getRoot().children[0] as FileSystemItem
+					for (var idx:int=0; idx < tokens.length; idx++)
+					{
+						var t:String=tokens[idx];
+						if (t == '')
+							continue;
+
+						var next:FileSystemItem=getAppendToNode(node.children, t);
+
+
+
+						if (next == null)
+						{
+							next=new FileSystemItem()
+							next.name=t
+							next.children=[]
+							next.attr=FULL_FOLDER
+							next.parent=node
+
+							node.children.push(next);
+						}
+
+						node=next;
+
+						if (idx == tokens.length - 1)
+						{ // ultimo elemento del path
+							node.size=item.size;
+							node.attr=item.attr;
+							node.date=item.date;
+						}
+					}
+					this.currentState="list" */
+			}
+
+			private function isFolder(item:FileSystemItem):Boolean
+			{
+				return item.attr != 0;
 			}
 		]]>
 	</fx:Script>
