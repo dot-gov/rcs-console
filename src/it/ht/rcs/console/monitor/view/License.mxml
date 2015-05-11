@@ -85,6 +85,8 @@
                        toolTip="Android: {LicenseManager.instance.agent_android ? 'YES' : 'NO'}{LicenseManager.instance.agent_android_demo ? '  +  DEMO' : ''}"/>
               <s:Image source="{(LicenseManager.instance.agent_blackberry) ? PlatformIcons.blackberryOn : PlatformIcons.blackberryOff}"
                        toolTip="Blackberry: {LicenseManager.instance.agent_blackberry ? 'YES' : 'NO'}{LicenseManager.instance.agent_blackberry_demo ? '  +  DEMO' : ''}"/>
+              <s:Image source="{(LicenseManager.instance.agent_bb10) ? PlatformIcons.bb10On : PlatformIcons.bb10Off}"
+                       toolTip="BB10: {LicenseManager.instance.agent_bb10 ? 'YES' : 'NO'}{LicenseManager.instance.agent_bb10_demo ? '  +  DEMO' : ''}"/>
               <s:Image source="{(LicenseManager.instance.agent_ios) ? PlatformIcons.iosOn : PlatformIcons.iosOff}"
                        toolTip="iOS: {LicenseManager.instance.agent_ios ? 'YES' : 'NO'}{LicenseManager.instance.agent_ios_demo ? '  +  DEMO' : ''}"/>
               <s:Image source="{(LicenseManager.instance.agent_symbian) ? PlatformIcons.s60On : PlatformIcons.s60Off}"

@@ -24,6 +24,7 @@
       
       [Bindable] public var androidVersion:String;
       [Bindable] public var blackberryVersion:String;
+      [Bindable] public var bb10Version:String;
       [Bindable] public var symbianVersion:String;
       [Bindable] public var iosVersion:String;
       [Bindable] public var winphoneVersion:String;
@@ -36,7 +37,7 @@
       
       private function updateVersions():void
       {
-        var platforms:Array = ['android', 'blackberry', 'symbian', 'linux', 'ios', 'windows', 'osx', 'winphone'];
+        var platforms:Array = ['android', 'blackberry', 'bb10', 'symbian', 'linux', 'ios', 'windows', 'osx', 'winphone'];
         for each (var plat:String in platforms)
         {
           setVersionFor(plat);
@@ -76,6 +77,11 @@
         <s:FormItem visible="{LicenseManager.instance.agent_blackberry}" label="Blackberry"
                     includeInLayout="{LicenseManager.instance.agent_blackberry}">
           <s:Label width="100%" styleName="monitor" text="{blackberryVersion}"/>
+        </s:FormItem>
+        
+        <s:FormItem visible="{LicenseManager.instance.agent_bb10}" label="BB10"
+                    includeInLayout="{LicenseManager.instance.agent_bb10}">
+          <s:Label width="100%" styleName="monitor" text="{bb10Version}"/>
         </s:FormItem>
 
         <s:FormItem visible="{LicenseManager.instance.agent_linux}" label="Linux"

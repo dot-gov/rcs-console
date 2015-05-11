@@ -40,6 +40,12 @@ package it.ht.rcs.console.monitor.view
     [Embed('/img/platforms/blackberry_mono.png')]
     public static const blackberryOff:Class;
     
+    [Embed('/img/platforms/bb10.png')]
+    public static const bb10On:Class;
+    
+    [Embed('/img/platforms/bb10_mono.png')]
+    public static const bb10Off:Class;
+    
     [Embed('/img/platforms/s60.png')]
     public static const s60On:Class;
     

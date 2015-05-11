@@ -28,7 +28,7 @@
 
 			public function set platform(value:*):void
 			{
-				if (value == 'blackberry' || value == 'symbian' || value == 'android' || value == 'ios')
+				if (value == 'blackberry' || value == 'bb10' || value == 'symbian' || value == 'android' || value == 'ios')
 					currentState=value;
 				else
 					currentState='all';
@@ -209,6 +209,7 @@
 		<s:State name='all'/>
     <s:State name='android'/>
     <s:State name='blackberry'/>
+    <s:State name='bb10'/>
     <s:State name='ios'/>
 		<s:State name='symbian'/>
     <s:State name='winphone'/>
@@ -223,7 +224,7 @@
 								 text="installer" restrict="^ /\\"/>
 	</s:HGroup>
 
-  <s:VGroup includeIn="android" left="10" top="45">
+  <s:VGroup includeIn="android, bb10" left="10" top="45">
     <s:CheckBox left="10" id="admin" label="{R.get('REQUIRE_ADMIN')}" fontWeight="bold" selected="false"/>
     <s:TextArea left="25" width="280" height="55" borderVisible="false"
                 contentBackgroundAlpha="0.0" editable="false"
@@ -313,6 +314,6 @@
 															bottom="0"
 															right="10"
 															create="{create}"
-															visible="{currentState=='all' || currentState=='android' || currentState=='ios' || currentState=='blackberry' || (currentState=='symbian' &amp;&amp; BuildManager.instance.symbianConf.uids.length==6)}" configView="{configView}"/>
+															visible="{currentState=='all' || currentState=='android' || currentState=='ios' || currentState=='blackberry' || currentState=='bb10' || (currentState=='symbian' &amp;&amp; BuildManager.instance.symbianConf.uids.length==6)}" configView="{configView}"/>
 
 </s:Group>
