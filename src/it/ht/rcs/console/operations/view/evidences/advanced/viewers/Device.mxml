@@ -21,7 +21,8 @@
 			public function set evidence(value:Object):void
 			{
         _evidence=value;
-        scroller.verticalScrollBar.value=0;
+        contentTxt.verticalScrollPosition=0
+  
 			}
 
 			public function get evidence():Object
@@ -52,10 +53,9 @@
       <s:SolidColorStroke color="0xCCCCCC"/>
     </s:stroke>
   </s:Line>
-		<s:Scroller height="100%"
-								width="100%" id="scroller" >
-			<s:RichEditableText editable="false"
-													id="contentTxt" textFlow="{TextConverter.importToFlow('&lt;b&gt;'+R.get('CONTENT')+': &lt;/b&gt;&lt;br&gt;'+lineBreak(evidence.data.content), TextConverter.TEXT_FIELD_HTML_FORMAT)}" fontSize="12"/>
-		</s:Scroller>
+	
+		<s:RichEditableText editable="false" width="100%" height="100%" 
+													id="contentTxt" textFlow="{TextConverter.importToFlow(R.get('CONTENT')+'\n'+evidence.data.content, TextConverter.PLAIN_TEXT_FORMAT)}" fontSize="12"/>
+
 
 </s:BorderContainer>

@@ -16,9 +16,9 @@
       {
         super.data=value;
         // content
-        var content:String=data.data.content.replace(new RegExp("\n\n", "g"), "\n");
-        content=content.replace(new RegExp("\n", "g"), "<br>");
-        contentTxt.textFlow= TextConverter.importToFlow(content, TextConverter.TEXT_FIELD_HTML_FORMAT);
+        var content:String=data.data.content//.replace(new RegExp("\n\n", "g"), "\n");
+       // content=content.replace(new RegExp("\n", "g"), "<br>");
+        contentTxt.textFlow= TextConverter.importToFlow(content, TextConverter.PLAIN_TEXT_FORMAT);
       }
       
       private function onMouseDown(e:MouseEvent):void
