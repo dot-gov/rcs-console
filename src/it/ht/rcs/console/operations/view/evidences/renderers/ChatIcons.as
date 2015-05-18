@@ -59,6 +59,9 @@ package it.ht.rcs.console.operations.view.evidences.renderers
     [Embed(source='/img/evidence/social/wechat_16.png')]
     public static const wechat:Class;
     
+    [Embed(source='/img/evidence/social/hangouts_16.png')]
+    public static const hangouts:Class;
+    
     [Embed(source='/img/evidence/social/url_16.png')]
     public static const url:Class;
     

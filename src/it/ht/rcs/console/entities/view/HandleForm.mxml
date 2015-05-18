@@ -68,6 +68,7 @@
           <s:ArrayList>
             <fx:String>Bbm</fx:String>
             <fx:String>Facebook</fx:String>
+            <fx:String>Hangouts</fx:String>
             <fx:String>Linkedin</fx:String>   
             <fx:String>Mail</fx:String>   
             <fx:String>Messages</fx:String>   

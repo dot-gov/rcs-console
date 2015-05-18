@@ -518,8 +518,8 @@
 
 			protected function openItem(event:ListEvent):void
 			{
-				var selectedRow:Object=event.currentTarget.selectedItem;
-				grid.expandItem(selectedRow, !event.target.isItemOpen(selectedRow));
+			/* 	var selectedRow:Object=event.currentTarget.selectedItem;
+				grid.expandItem(selectedRow, !event.target.isItemOpen(selectedRow)); */
 			}
 
 			protected function setColumnStyle(data:Object, column:AdvancedDataGridColumn):Object

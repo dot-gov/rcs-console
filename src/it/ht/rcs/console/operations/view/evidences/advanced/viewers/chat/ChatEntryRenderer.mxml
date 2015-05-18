@@ -341,6 +341,21 @@
 									}
 									targetColor=0x99FFFF;
 								}
+                //Hangouts
+                else if (data.data.program.toLowerCase() == "hangouts")
+                {
+                  if (data.data.rcpt != null && data.data.rcpt != "")
+                  {
+                    //isPeer=data.data.rcpt==nickname;
+                    isPeer=data.data.incoming;
+                    
+                  }
+                  else
+                  {
+                    isPeer=data.data.peer == nickname;
+                  }
+                  targetColor=0x99FFFF;
+                }
 
 								//MESSENGER
 								if (data.data.program.toLowerCase() == "messenger")
