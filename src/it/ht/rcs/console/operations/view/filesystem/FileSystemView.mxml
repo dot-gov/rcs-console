@@ -518,8 +518,12 @@
 
 			protected function openItem(event:ListEvent):void
 			{
-			/* 	var selectedRow:Object=event.currentTarget.selectedItem;
-				grid.expandItem(selectedRow, !event.target.isItemOpen(selectedRow)); */
+				grid.validateNow()
+				var selectedRow:Object=event.currentTarget.selectedItem;
+				grid.expandItem(selectedRow, !event.target.isItemOpen(selectedRow) || true);
+				var e:AdvancedDataGridEvent=new AdvancedDataGridEvent(AdvancedDataGridEvent.ITEM_OPEN)
+				e.item=event.currentTarget.selectedItem
+				grid.dispatchEvent(e)
 			}
 
 			protected function setColumnStyle(data:Object, column:AdvancedDataGridColumn):Object
@@ -570,12 +574,12 @@
 				searchResultsDg.dataProvider=result.entries;
 				resultBox.visible=true
 				if (result.total == 0)
-					resultTxt.text= R.get('SEARCH_NO_RESULTS')  
+					resultTxt.text=R.get('SEARCH_NO_RESULTS')
 
 				else
-        
-        resultTxt.text=R.get('SEARCH_RESULTS', [result.total, result.page, result.pages])
-					//resultTxt.text="Found " + result.total + " items. Showing page " + result.page + " of " + result.pages
+
+					resultTxt.text=R.get('SEARCH_RESULTS', [result.total, result.page, result.pages])
+				//resultTxt.text="Found " + result.total + " items. Showing page " + result.page + " of " + result.pages
 
 				if (result.page == 1 || (result.pages < 2))
 					prevBtn.visible=false;
