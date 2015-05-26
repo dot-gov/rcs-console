@@ -120,6 +120,7 @@
       {
         var userId:String=Console.currentSession.user._id;
         var sW:SecurityWarning=e.currentTarget as SecurityWarning;
+        PopUpManager.removePopUp(sW)
         securitySettings.data[userId]=sW.doNotShow;
         doBuild();
       }

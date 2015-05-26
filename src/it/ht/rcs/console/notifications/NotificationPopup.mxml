@@ -86,6 +86,7 @@
 			private function fadeOutEnd():void
 			{
 				PopUpManager.removePopUp(this);
+
 			}
 
 			private function adjustPosition(event:Event=null):void
