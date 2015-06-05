@@ -49,6 +49,9 @@
       [Embed(source='/img/NEW/commands_50.png')]
       private static const commandsIcon:Class;
       
+      [Embed(source='/img/NEW/sms_50.png')]
+      private static const smsIcon:Class;
+      
       [Embed(source='/img/NEW/ipaddresses_50.png')]
       private static const ipaddressesIcon:Class;
       
@@ -113,7 +116,6 @@
             {
               this.enabled=false;
             }
-            
           }
          
         }
@@ -158,6 +160,8 @@
           return fileTransferIcon;
         else if (data is Object && data.customType == 'commands')
           return commandsIcon;
+        else if (data is Object && data.customType == 'sms')
+          return smsIcon;
         else if (data is Object && data.customType == 'ipaddresses')
           return ipaddressesIcon;
         

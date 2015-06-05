@@ -10,16 +10,16 @@
 	<fx:Script>
 		<![CDATA[
 			import flashx.textLayout.conversion.TextConverter;
-			
+
 			import it.ht.rcs.console.DB;
 			import it.ht.rcs.console.agent.controller.AgentManager;
 			import it.ht.rcs.console.evidence.controller.EvidenceManager;
 			import it.ht.rcs.console.utils.FileUtils;
 			import it.ht.rcs.console.utils.Size;
 			import it.ht.rcs.console.utils.StringUtils;
-			
+
 			import locale.R;
-			
+
 			import mx.controls.Alert;
 			import mx.rpc.events.ResultEvent;
 
@@ -28,6 +28,18 @@
 			private var extension:String;
 			private var originalName:String;
 			private var request:URLRequest
+
+			[Bindable]
+			private var isImage:Boolean
+
+			[Bindable]
+			private var frameSize:Number=4;
+
+			[Bindable]
+			private var imgW:Number=80;
+
+			[Bindable]
+			private var imgH:Number=80;
 
 
 			[Bindable]
@@ -43,6 +55,7 @@
 			{
 				if (data)
 				{
+					isImage=false;
 					if (data.data.type == "open")
 					{
 						programTxt.textFlow=TextConverter.importToFlow("<b>" + R.get('PROGRAM') + ": </b>" + data.data.program, TextConverter.TEXT_FIELD_HTML_FORMAT);
@@ -65,9 +78,32 @@
 					}
 					accessTxt.textFlow=TextConverter.importToFlow("<b>Access Mask: </b>" + FileUtils.getAccessMask(data.data.access), TextConverter.TEXT_FIELD_HTML_FORMAT);
 				}
+
+				//preview image
+
 				downloadStatusTxt.text="";
 				downloadBtn.label="Download";
+
+				var extension:String=StringUtils.getExtension(data.data.path)
+				if (extension.toLowerCase() == "jpg" || extension.toLowerCase() == "png" || extension.toLowerCase() == "gif" && data.data.type=='capture')
+				{
+	        //image preview
+					var target:String=EvidenceManager.instance.evidenceFilter.target;
+					var url:String
+					if (DB.instance.demo)
+					{
+						url="grid/" + data.data.path
+					}
+					else
+					{
+						url=DB.hostAutocomplete(Console.currentSession.server) + "grid/" + data.data._grid + "?target_id=" + encodeURIComponent(target);
+					}
+          img.source=url
+					isImage=true;
+				}
 			}
+
+
 
 			private function getFile():void
 			{
@@ -113,36 +149,36 @@
 
 			private function openFile():void
 			{
-        file.openWithDefaultApplication()
-      /*   var os:String=Capabilities.os.toLowerCase();
-        trace(NativeProcess.isSupported)
-        if(os.indexOf("windows")!=-1)
-        {
-          var sandboxie:flash.filesystem.File=new flash.filesystem.File();
-          sandboxie.nativePath="C:/Program Files/Sandboxie/Start.exe"
-          if (sandboxie.exists)
-          {
-            var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
-            nativeProcessStartupInfo.executable = sandboxie; 
-            var params:Vector.<String> = new Vector["<String>"](); 
-            params.push(file.nativePath); 
-            nativeProcessStartupInfo.arguments= params; 
-            var process:NativeProcess = new NativeProcess(); 
-            process.start(nativeProcessStartupInfo); 
-          }
-          else
-          {
-            file.openWithDefaultApplication()
-          }
-        }
-        else
-        {
-          file.openWithDefaultApplication()
-        }
-       */
+				file.openWithDefaultApplication()
+			/*   var os:String=Capabilities.os.toLowerCase();
+				trace(NativeProcess.isSupported)
+				if(os.indexOf("windows")!=-1)
+				{
+					var sandboxie:flash.filesystem.File=new flash.filesystem.File();
+					sandboxie.nativePath="C:/Program Files/Sandboxie/Start.exe"
+					if (sandboxie.exists)
+					{
+						var nativeProcessStartupInfo:NativeProcessStartupInfo = new NativeProcessStartupInfo();
+						nativeProcessStartupInfo.executable = sandboxie;
+						var params:Vector.<String> = new Vector["<String>"]();
+						params.push(file.nativePath);
+						nativeProcessStartupInfo.arguments= params;
+						var process:NativeProcess = new NativeProcess();
+						process.start(nativeProcessStartupInfo);
+					}
+					else
+					{
+						file.openWithDefaultApplication()
+					}
+				}
+				else
+				{
+					file.openWithDefaultApplication()
+				}
+			 */
 			}
 
-	
+
 
 			private function onSelect(e:Event):void
 			{
@@ -214,14 +250,14 @@
 				<s:SolidColorStroke color="0xCCCCCC"/>
 			</s:stroke>
 		</s:Line>
-		<s:HGroup verticalAlign="top"
+		<s:VGroup verticalAlign="top"
 							width="100%">
 			<s:RichText id="pathTxt"
-									width="75%"/>
+									width="100%"/>
 
 			<s:RichText id="sizeTxt"
-									width="25%"/>
-		</s:HGroup>
+									width="100%"/>
+		</s:VGroup>
 		<s:Line width="100%"
 						visible="{data.data.type=='capture'}"
 						includeInLayout="{data.data.type=='capture'}">
@@ -229,6 +265,33 @@
 				<s:SolidColorStroke color="0xCCCCCC"/>
 			</s:stroke>
 		</s:Line>
+		<s:BorderContainer id="frame"
+											 visible="{isImage}"
+											 includeInLayout="{isImage}"
+											 width="{img.width+(frameSize*2)}"
+											 height="{img.height+(frameSize*2)}"
+											 backgroundColor="0xFFFFFF"
+											 borderColor="0xCCCCCC"
+											 buttonMode="true"
+											 useHandCursor="true">
+
+			<s:BitmapImage id="img"
+										 smooth="true"
+										 width="{imgW}"
+										 height="{imgH}"
+										 scaleMode="zoom"
+										 x="{frameSize-1}"
+										 y="{frameSize-1}"
+										 source=""
+										 visible="{isImage}"
+										 includeInLayout="{isImage}">
+			</s:BitmapImage>
+			<s:SWFLoader id="spinner"
+									 width="30"
+									 height="30"
+									 x="27"
+									 y="27"/>
+		</s:BorderContainer>
 		<s:HGroup visible="{data.data.type=='capture' &amp;&amp; Console.currentSession.user.is_view_export()}"
 							includeInLayout="{data.data.type=='capture' &amp;&amp; Console.currentSession.user.is_view_export()}"
 							verticalAlign="middle">

@@ -10,6 +10,8 @@ TODO 10.x.x
   [X] raggruppamento Factory e Istanze
      evidence e filesystem da soli sopra, factory sotto
      
+  [] Visualizzazione file di tipo immagine
+     
   [] Icona call whatsapp
      
   [] Intelligence >filtri (no cross operation + depth)
@@ -32,6 +34,8 @@ TODO 10.x.x
   [] in modalita' demo se c'e' un file in locale usare quello al posto del logo (cifratura?)
   
   [] ogni popup dei filtri deve avere il tasto "apply" (anche nei filtri intelligence) 
+  
+  [] rimuovere modulo live mic e conf call dalle configurazioni
 
 ========================================================================================
 TODO x.x.x

@@ -2,6 +2,7 @@
 <s:BorderContainer xmlns:fx="http://ns.adobe.com/mxml/2009"
 									 xmlns:s="library://ns.adobe.com/flex/spark"
 									 xmlns:mx="library://ns.adobe.com/flex/mx"
+                   xmlns:viewers="it.ht.rcs.console.operations.view.evidences.advanced.viewers.*"
 									 height="100%"
 									 width="100%"
 									 borderColor="0xCCCCCC"
@@ -56,6 +57,9 @@
 
 			[Bindable]
 			public var idVisible:Boolean;
+      
+      [Bindable]
+      private var isImage:Boolean
 
 			[Bindable]
 			public function set evidence(value:Object):void
@@ -91,6 +95,23 @@
           loader.addEventListener(IOErrorEvent.IO_ERROR, onError);
           loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
 					loader.load(new URLRequest(url));
+          
+          var extension:String=StringUtils.getExtension(_evidence.data.path)
+          if (extension.toLowerCase() == "jpg" || extension.toLowerCase() == "png" || extension.toLowerCase() == "gif" && _evidence.data.type=='capture')
+          {
+            //image preview
+           
+            if (DB.instance.demo)
+            {
+              url="grid/" + _evidence.data.path
+            }
+            else
+            {
+              url=DB.hostAutocomplete(Console.currentSession.server) + "grid/" + _evidence.data._grid + "?target_id=" + encodeURIComponent(target);
+            }
+            imageViewer.url=url
+            isImage=true;
+          }
 					//callLater(onTranslate, [null])
 					//clearTimeout(t)
 				}
@@ -358,12 +379,14 @@
 							width="100%"
 							textFlow="{TextConverter.importToFlow('&lt;b&gt;'+R.get('CONTENT')+': &lt;/b&gt;'+content, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
 							fontSize="12"
-							visible="{evidence.data.type=='capture'}"
-							includeInLayout="{evidence.data.type=='capture'}"/>
+							visible="{evidence.data.type=='capture' &amp;&amp; content!=null}"
+							includeInLayout="{evidence.data.type=='capture'  &amp;&amp; content!=null}"/>
 	<s:RichText id="translationTxt"
 							width="100%"
 							textFlow="{TextConverter.importToFlow('&lt;i&gt;&lt;b&gt;'+R.get('CONTENT')+': &lt;/b&gt;'+translation+'&lt;/i&gt;', TextConverter.TEXT_FIELD_HTML_FORMAT)}"
 							fontSize="12"
-							visible="{evidence.data.type=='capture'}"
-							includeInLayout="{evidence.data.type=='capture'}"/>
+							visible="{evidence.data.type=='capture'  &amp;&amp; content!=null}"
+							includeInLayout="{evidence.data.type=='capture'  &amp;&amp; content!=null}"/>
+  <viewers:ImageViewer id="imageViewer" visible="{isImage}" includeInLayout="{isImage}"/>
+  
 </s:BorderContainer>

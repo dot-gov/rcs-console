@@ -58,7 +58,6 @@
 					gripper.visible=false;
 				} */
 				displayTxt.text="Screen Resolution X: " + Capabilities.screenResolutionX + "\n" + "Screen Resolution Y: " + Capabilities.screenResolutionY + "\n" + "Screen DPI: " + Capabilities.screenDPI + "\n" + "Stage contentsScaleFactor: " + stage.contentsScaleFactor + "\n"
-
 				NativeCursor.registerCursors();
 			}
 

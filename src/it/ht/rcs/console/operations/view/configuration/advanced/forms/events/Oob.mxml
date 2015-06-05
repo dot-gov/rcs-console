@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<events:EventFields xmlns:fx="http://ns.adobe.com/mxml/2009"
+                    xmlns:s="library://ns.adobe.com/flex/spark"
+                    xmlns:mx="library://ns.adobe.com/flex/mx"
+                    xmlns:events="it.ht.rcs.console.operations.view.configuration.advanced.forms.events.*"
+                    xmlns:utils="it.ht.rcs.console.utils.*"
+                    creationComplete="init()">
+  
+  <fx:Script>
+    <![CDATA[
+      import locale.R;
+      
+      private function init():void
+      {
+        text.text = event.text;
+      }
+      
+      override public function commit():void
+      {
+    
+        event.text = text.text;
+      }
+      
+    
+    ]]>
+  </fx:Script>
+  
+  <s:Label width="280" lineHeight="16"
+           text="{R.get('CONFIG_HELP_OOB_EVENT')}"/>
+  
+  <s:Form>
+    
+   
+    
+    <s:FormItem label="{R.get('TEXT')}">
+      <s:TextInput id="text" width="160"/>
+    </s:FormItem>
+  
+  </s:Form>
+  
+  <fx:Declarations>
+   
+  </fx:Declarations>
+    
+</events:EventFields>

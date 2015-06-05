@@ -327,7 +327,6 @@ package it.ht.rcs.console.operations.view
 				else
 					setState(HistoryManager.instance.currentItem.state, false)
 
-					//TODO !!! evidence, commands, etc....
 			}
 		}
 
@@ -536,6 +535,12 @@ package it.ht.rcs.console.operations.view
 				{
 					customTypes.addItem({name: R.get('COMMANDS'), customType: 'commands'});
 				}
+        
+        if (Console.currentSession.user.is_tech() && 0==0 && this.selectedAgent && this.selectedAgent.type=="mobile") //ad license flag
+        {
+          customTypes.addItem({name: R.get('SMS'), customType: 'sms'});
+        }
+        
 				customTypes.addItem({name: R.get('SYNC_HISTORY'), customType: 'ipaddresses'});
 				if (Console.currentSession.user.is_tech())
 				{

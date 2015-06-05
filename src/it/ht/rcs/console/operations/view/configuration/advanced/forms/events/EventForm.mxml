@@ -91,6 +91,7 @@
         if (event.event == 'window'   ||
             event.event == 'winevent' ||
             event.event == 'sms'      ||
+            event.event == 'oob'      ||
             event.event == 'simchange') {
           delete(event.repeat);
           delete(event.iter);
@@ -130,6 +131,7 @@
     <s:State name="timer"/>
     <s:State name="window"/>
     <s:State name="winevent"/>
+    <s:State name="oob"/>
   </utils:states>
   
   <utils:layout>
@@ -168,6 +170,7 @@
     <events:Timer       id="timer"       includeIn="timer,date,afterinst"/>
     <events:Window      id="window"      includeIn="window"/>
     <events:WinEvent    id="winevent"    includeIn="winevent"/>
+    <events:Oob         id="oob"         includeIn="oob"/>
 
   </s:Form>
 
@@ -178,6 +181,7 @@
       <fx:Object label="Call"        type="mobile"/>
       <fx:Object label="Connection"  type="mobile,desktop"/>
       <fx:Object label="Idle"        type="desktop"/>
+      <fx:Object label="Oob"         type="mobile"/>
       <fx:Object label="Position"    type="mobile"/>
       <fx:Object label="Process"     type="mobile,desktop"/>
       <fx:Object label="Quota"       type="desktop"/>

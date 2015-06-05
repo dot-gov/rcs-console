@@ -282,6 +282,7 @@ package it.ht.rcs.console.operations.view.configuration.advanced.renderers
       if (event.event == 'window' ||
         event.event == 'winevent' ||
         event.event == 'sms'      ||
+        event.event == 'oob'      ||
         event.event == 'simchange') {
         if (repeatPin) repeatPin.visible = false;
         if (endPin)    endPin.visible    = false;
@@ -314,6 +315,7 @@ package it.ht.rcs.console.operations.view.configuration.advanced.renderers
         case 'call':       return 'On call from ' + (event.number ? event.number : 'any number');
         case 'position':   return 'On position\n' + event.type.toUpperCase();
         case 'sms':        return 'On sms from ' + event.number;
+        case 'oob':        return 'On out of band ' + event.text;
         default:           return 'On ' + event.event;
       }
     }

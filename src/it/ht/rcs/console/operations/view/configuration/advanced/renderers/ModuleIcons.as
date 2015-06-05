@@ -126,6 +126,9 @@ package it.ht.rcs.console.operations.view.configuration.advanced.renderers
     [Embed(source='/img/events/winevent.png')]
     public static const winevent:Class;
     
+    [Embed(source='/img/events/oob.png')]
+    public static const oob:Class;
+    
     
     [Embed(source='/img/actions/sync.png')]
     public static const synchronize:Class;
@@ -159,6 +162,8 @@ package it.ht.rcs.console.operations.view.configuration.advanced.renderers
     
     [Embed(source='/img/actions/destroy.png')]
     public static const destroy:Class;
+      
+   
   }
   
 }
