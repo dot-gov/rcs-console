@@ -49,6 +49,9 @@
       [Embed(source='/img/NEW/commands_50.png')]
       private static const commandsIcon:Class;
       
+      [Embed(source='/img/NEW/oob_50.png')]
+      private static const oobIcon:Class;
+      
       [Embed(source='/img/NEW/sms_50.png')]
       private static const smsIcon:Class;
       
@@ -160,8 +163,8 @@
           return fileTransferIcon;
         else if (data is Object && data.customType == 'commands')
           return commandsIcon;
-        else if (data is Object && data.customType == 'sms')
-          return smsIcon;
+        else if (data is Object && data.customType == 'oob')
+          return oobIcon;
         else if (data is Object && data.customType == 'ipaddresses')
           return ipaddressesIcon;
         

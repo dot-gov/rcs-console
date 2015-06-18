@@ -1,8 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
-         xmlns:s="library://ns.adobe.com/flex/spark" 
-         xmlns:mx="library://ns.adobe.com/flex/mx" width="400" height="300">
-  <fx:Declarations>
-    <!-- Place non-visual elements (e.g., services, value objects) here -->
-  </fx:Declarations>
-</s:Group>
+<s:VGroup xmlns:fx="http://ns.adobe.com/mxml/2009"
+					xmlns:s="library://ns.adobe.com/flex/spark"
+					xmlns:mx="library://ns.adobe.com/flex/mx"
+					xmlns:backend="it.ht.rcs.console.system.view.backend.*"
+					xmlns:graph="it.ht.rcs.console.system.view.rmi.graph.*"
+					xmlns:backups="it.ht.rcs.console.system.view.backup.backups.*"
+					width="100%"
+					height="100%"
+					addedToStage="onAddedToStage(event)"
+					creationComplete="init()"
+					removedFromStage="onRemovedFromStage(event)"
+					xmlns:rmi="it.ht.rcs.console.system.view.rmi.*">
+
+	<fx:Script>
+		<![CDATA[
+			import it.ht.rcs.console.events.DataLoadedEvent;
+			import it.ht.rcs.console.modem.controller.ModemManager;
+			import it.ht.rcs.console.modem.model.Modem;
+			import it.ht.rcs.console.system.view.backend.graph.renderers.DBRenderer;
+			import it.ht.rcs.console.system.view.rmi.graph.renderers.ModemRenderer;
+
+			import mx.collections.ListCollectionView;
+
+			[Bindable]
+			private var modems:ListCollectionView;
+
+      [Bindabòe]
+			public var selected:Modem;
+
+			private var renderers:Vector.<ModemRenderer>;
+
+			private function init():void
+			{
+				refreshView();
+			}
+
+			private function onAddedToStage(event:Event):void
+			{
+
+				ModemManager.instance.addEventListener(DataLoadedEvent.DATA_LOADED, refreshView);
+				ModemManager.instance.listenRefresh();
+			}
+
+			private function onRemovedFromStage(event:Event):void
+			{
+				ModemManager.instance.removeEventListener(DataLoadedEvent.DATA_LOADED, refreshView);
+				ModemManager.instance.unlistenRefresh();
+			}
+
+			private function refreshView(event:DataLoadedEvent=null):void
+			{
+				modems=ModemManager.instance.getView();
+				buildGraph();
+			}
+
+			public function buildGraph():void
+			{
+        deselectAll()
+				renderers=new Vector.<ModemRenderer>();
+				for each (var el:Modem in modems)
+				{
+					var mr:ModemRenderer=new ModemRenderer();
+					mr.addEventListener(ModemRenderer.SELECTED, onSelection)
+					mr.modem=el;
+					renderers.push(mr);
+				}
+
+				var db:DBRenderer=new DBRenderer();
+				db.modems=renderers;
+				graph.db=db;
+				graph.rebuildGraph();
+      
+			}
+      
+      private function deselectAll():void
+      {
+        if(!renderers)
+          return;
+        for (var i:int=0; i < renderers.length; i++)
+        {
+          var renderer:ModemRenderer=renderers[i] as ModemRenderer;
+          renderer.selected=false
+        }
+        selected=null
+        actionBar.selected=selected
+      }
+
+			protected function onSelection(e:Event):void
+			{
+        
+       
+				for (var i:int=0; i < renderers.length; i++)
+				{
+					var renderer:ModemRenderer=renderers[i] as ModemRenderer;
+					if (renderer != e.currentTarget)
+          {
+						renderer.selected=false;
+          }
+          else
+          {
+            selected=renderer.modem;
+            actionBar.selected=selected
+          }
+          
+				}
+       
+			}
+		]]>
+	</fx:Script>
+
+	<rmi:RMIActionBar id="actionBar"/>
+
+	<s:BorderContainer width="100%"
+										 height="100%"
+										 borderColor="#E3E6EC"
+										 borderVisible="true"
+										 borderWeight="2"
+										 cornerRadius="10">
+
+		<s:Rect width="100%"
+						height="100%"
+						radiusX="10"
+						radiusY="10">
+			<s:fill>
+				<s:LinearGradient rotation="90">
+					<s:GradientEntry color="#E3E6EC"/>
+					<s:GradientEntry color="#ffffff"/>
+					<s:GradientEntry color="#ffffff"/>
+				</s:LinearGradient>
+			</s:fill>
+		</s:Rect>
+
+		<s:Scroller id="scroller"
+								width="100%"
+								height="100%">
+			<graph:RMIGraph id="graph"
+											draggable="false" click="deselectAll()"/>
+		</s:Scroller>
+
+	</s:BorderContainer>
+
+</s:VGroup>

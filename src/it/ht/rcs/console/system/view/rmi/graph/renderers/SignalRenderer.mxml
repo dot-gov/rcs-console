@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009"
+				 xmlns:s="library://ns.adobe.com/flex/spark"
+				 xmlns:mx="library://ns.adobe.com/flex/mx"
+				 width="14"
+				 height="14">
+  
+  
+	<fx:Script>
+		[Embed(source='/img/signal/signal1.png')]
+		private static const signal1:Class;
+		[Embed(source='/img/signal/signal2.png')]
+		private static const signal2:Class;
+		[Embed(source='/img/signal/signal3.png')]
+		private static const signal3:Class;
+		[Embed(source='/img/signal/signal4.png')]
+		private static const signal4:Class;
+		[Embed(source='/img/signal/signal5.png')]
+		private static const signal5:Class;
+    
+    private const NO_SIGNAL:String="No signal";
+    private const WEAK_SIGNAL:String="Weak signal";
+    private const GOOD_SIGNAL:String="Good signal";
+    private const STRONG_SIGNAL:String="Strong signal";
+    private const EXCELLENT_SIGNAL:String="Excellent signal";
+    
+
+    public function set status(value:Object):void
+    {
+      switch (value.info)
+      {
+        case NO_SIGNAL:
+          icon.source=signal1
+          break;
+        case WEAK_SIGNAL:
+          icon.source=signal2
+          break;
+        case GOOD_SIGNAL:
+          icon.source=signal3
+          break;
+        case STRONG_SIGNAL:
+          icon.source=signal4
+          break;
+        case EXCELLENT_SIGNAL:
+          icon.source=signal5
+          break;
+        default:
+          icon.source=signal1
+      }
+    };
+    
+	</fx:Script>
+	<s:BitmapImage id="icon"
+								 smooth="true"
+								 width="14"
+								 height="14" bottom="3"/>
+</s:Group>

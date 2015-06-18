@@ -57,6 +57,9 @@
             break;
           case 'money':
             icon.source = Icons.money32;
+            
+          case 'modem':
+            icon.source = Icons.modem32;
             break;
           default:
             icon.source = null;

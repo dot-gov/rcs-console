@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actionbar:ActionBar xmlns:fx="http://ns.adobe.com/mxml/2009"
+                     xmlns:s="library://ns.adobe.com/flex/spark"
+                     xmlns:mx="library://ns.adobe.com/flex/mx"
+                     xmlns:actionbar="it.ht.rcs.console.main.actionbar.*">
+  
+  
+  <s:Button label="{R.get('NEW_MODEM')}" click="onNewClick()" enabled="true" icon="@Embed('/img/NEW/newModem.png')"/>
+  <s:Button label="{R.get('EDIT')}" click="onEditClick()" enabled="{selected!=null}" icon="@Embed('/img/NEW/edit.png')"/>
+  <s:Button label="{R.get('DELETE')}" click="onDeleteClick()" enabled="{selected!=null}" icon="@Embed('/img/NEW/delete_32.png')"/>
+
+  <actionbar:Separator width="40"/>
+  
+  <s:Button label="{R.get('SEND_SMS_TEST')}" enabled="{selected!=null &amp;&amp; MonitorManager.instance.getStatusByAddress(selected.port).status=='0'}" icon="@Embed('/img/NEW/sms_32.png')" click="onTest()"/>
+  
+  <actionbar:Separator width="40"/>
+  <s:Button label="{R.get('AUTODETECT')}" click="onAutoDetect()" enabled="{Console.currentSession.user.is_sys_injectors()}" icon="@Embed('/img/NEW/autodetect.png')"/>
+  <s:Spacer width="100%"/>
+  
+
+
+  <fx:Script>
+    <![CDATA[
+      import it.ht.rcs.console.modem.controller.ModemManager;
+      import it.ht.rcs.console.modem.model.Modem;
+      import it.ht.rcs.console.monitor.controller.MonitorManager;
+      import it.ht.rcs.console.utils.AlertPopUp;
+      
+      import locale.R;
+      
+      import mx.events.CloseEvent;
+      import mx.managers.PopUpManager;
+
+      
+      [Bindable]
+      public var selected:Modem;
+      
+      private function onNewClick():void
+      {
+        var popup:ModemForm=PopUpManager.createPopUp(this.parentDocument as DisplayObject, ModemForm, true) as ModemForm;
+        popup.action=ModemForm.CREATE
+        PopUpManager.centerPopUp(popup);
+      }
+      
+      private function onTest():void
+      {
+        var popup:TestSMSForm=PopUpManager.createPopUp(this.parentDocument as DisplayObject, TestSMSForm, true) as TestSMSForm;
+        popup.modem=selected;
+        PopUpManager.centerPopUp(popup);
+      }
+      
+      private function onAutoDetect():void
+      {
+        ModemManager.instance.autodetect()
+      }
+      
+      private function onDeleteClick():void
+      {
+       
+        AlertPopUp.show(R.get('CONFIRM_MODEM_DELETION'), R.get('CONFIRM'), AlertPopUp.YES | AlertPopUp.NO, null, function(e:CloseEvent):void
+        {
+          if (e.detail == AlertPopUp.YES)
+            ModemManager.instance.removeModem(selected)
+        }, null, AlertPopUp.NO,null,false);
+      }
+      
+      private function onEditClick():void
+      {
+        var popup:ModemForm=PopUpManager.createPopUp(this.parentDocument as DisplayObject, ModemForm, true) as ModemForm;
+        popup.action=ModemForm.EDIT;
+        popup.modem=selected
+        PopUpManager.centerPopUp(popup);
+      }
+      
+     
+     
+      
+    ]]>
+  </fx:Script>
+
+</actionbar:ActionBar>

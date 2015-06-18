@@ -48,6 +48,7 @@
           <pathEntry path="CHANGELOG"/>
           <pathEntry path="img/windows"/>
           <pathEntry path="img/stub"/>
+          <pathEntry path="img/.DS_Store"/>
           <pathEntry path="img/monitor"/>
           <pathEntry path="img/actions"/>
           <pathEntry path="img/buttons"/>

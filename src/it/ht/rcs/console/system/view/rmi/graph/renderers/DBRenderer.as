@@ -1,4 +1,4 @@
-package it.ht.rcs.console.system.view.backend.graph.renderers
+package it.ht.rcs.console.system.view.rmi.graph.renderers
 {
   import it.ht.rcs.console.system.view.rmi.graph.renderers.ModemRenderer;
   
@@ -10,7 +10,6 @@ package it.ht.rcs.console.system.view.backend.graph.renderers
     private static const WIDTH:Number  = 60; // 5*2 padding + 50 (width of icon)
     private static const HEIGHT:Number = 60; // 5*2 padding + 50 (height of icon)
     
-    public var shards:Vector.<ShardRenderer>;
     public var modems:Vector.<ModemRenderer>;
     
     [Embed(source='/img/NEW/rcs_icona.png')]

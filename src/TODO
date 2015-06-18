@@ -36,6 +36,12 @@ TODO 10.x.x
   [] ogni popup dei filtri deve avere il tasto "apply" (anche nei filtri intelligence) 
   
   [] rimuovere modulo live mic e conf call dalle configurazioni
+  
+  [] phone number prop on agent mobile
+  
+  [] persistent diventa un flag su tutte le configurazioni android e rimosso come cartella dall'albero delle configurazioni
+  
+  [] commands download (output troppo grande blocca console)
 
 ========================================================================================
 TODO x.x.x

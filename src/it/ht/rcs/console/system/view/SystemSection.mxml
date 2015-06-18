@@ -181,6 +181,10 @@
 		<s:NavigatorContent label="{R.get('CONNECTORS')}">
 			<connectors:Connectors/>
 		</s:NavigatorContent>
+    
+    <s:NavigatorContent label="{R.get('RMI')}">
+      <rmi:RMI/>
+    </s:NavigatorContent>
 
 	</mx:ViewStack>
 

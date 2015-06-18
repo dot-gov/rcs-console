@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actionbar:ActionBar xmlns:fx="http://ns.adobe.com/mxml/2009"
+										 xmlns:s="library://ns.adobe.com/flex/spark"
+										 xmlns:mx="library://ns.adobe.com/flex/mx"
+										 xmlns:actionbar="it.ht.rcs.console.main.actionbar.*"
+										 xmlns:editors="it.ht.rcs.console.operations.view.evidences.actionbar.editors.*"
+										 creationComplete="init()"
+										 removedFromStage="onRemovedFromStage()"
+										 addedToStage="onAddedToStage()">
+
+	<s:Button label="{R.get('SMS_NEW')}"
+						icon="@Embed('/img/NEW/addOob.png')" click="send()"
+						/>
+	<actionbar:Separator width="40"/>
+
+	
+
+
+	<fx:Metadata> 
+  
+  </fx:Metadata>
+
+	<fx:Script>
+		<![CDATA[
+      import it.ht.rcs.console.agent.model.Agent;
+      import it.ht.rcs.console.evidence.controller.EvidenceManager;
+      import it.ht.rcs.console.evidence.model.Evidence;
+      import it.ht.rcs.console.evidence.model.TypeCount;
+      import it.ht.rcs.console.modem.controller.ModemManager;
+      import it.ht.rcs.console.modem.model.Modem;
+      import it.ht.rcs.console.monitor.controller.LicenseManager;
+      import it.ht.rcs.console.operations.view.OperationsSection;
+      import it.ht.rcs.console.target.model.Target;
+      import it.ht.rcs.console.utils.AlertPopUp;
+      
+      import locale.R;
+      
+      import mx.collections.ArrayCollection;
+      import mx.controls.Alert;
+      import mx.events.CloseEvent;
+      import mx.managers.PopUpManager;
+
+			[Embed(source="/img/evidence/paperplus32.png")]
+			public var ReportAddIcon:Class;
+
+			[Embed(source="/img/evidence/paperminus32.png")]
+			public var ReportRemoveIcon:Class;
+
+			[Embed(source="/img/evidence/linedpaperplus32.png")]
+			public var SummaryShowIcon:Class;
+
+			[Embed(source="/img/evidence/linedpaperminus32.png")]
+			public var SummaryHideIcon:Class;
+
+			[Embed(source="/img/evidence/article32.png")]
+			public var DetailShowIcon:Class;
+
+			[Embed(source="/img/evidence/stop32.png")]
+			public var DetailHideIcon:Class;
+
+			[Bindable]
+			public var target:Target;
+
+			[Bindable]
+			public var section:OperationsSection;
+
+
+			private function send():void
+			{
+        var popup:SendSmsForm=PopUpManager.createPopUp(root, SendSmsForm, true) as SendSmsForm;
+        var agent:Agent=section.stateManager.selectedAgent;
+        var modems:ArrayCollection=ModemManager.instance.getAvailableModems()
+        //var modem:Modem=
+        popup.agent=agent;
+        popup.modems=modems;
+        PopUpManager.centerPopUp(popup);
+			}
+
+		
+			private function init():void
+			{
+
+			}
+
+		
+
+			private function onRemovedFromStage():void
+			{
+
+			}
+
+			private function onAddedToStage():void
+			{
+
+			}
+		]]>
+	</fx:Script>
+
+</actionbar:ActionBar>

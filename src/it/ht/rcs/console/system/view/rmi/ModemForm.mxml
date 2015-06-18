@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<utils:TitleWindowSaveCancel xmlns:fx="http://ns.adobe.com/mxml/2009"
+                            xmlns:s="library://ns.adobe.com/flex/spark"
+                            xmlns:utils="it.ht.rcs.console.utils.*"
+                            xmlns:mx="library://ns.adobe.com/flex/mx"
+                            save="save()" creationComplete="init(event)"
+                            title="{action==CREATE? R.get('MODEM_ADD'):R.get('MODEM_EDIT')}">
+  
+  <fx:Script>
+    <![CDATA[
+      import it.ht.rcs.console.*;
+      import it.ht.rcs.console.ObjectUtils;
+      import it.ht.rcs.console.events.DataLoadedEvent;
+      import it.ht.rcs.console.modem.controller.ModemManager;
+      import it.ht.rcs.console.modem.model.Modem;
+      import it.ht.rcs.console.monitor.controller.LicenseManager;
+      import it.ht.rcs.console.network.model.Collector;
+      import it.ht.rcs.console.utils.AlertPopUp;
+      
+      import locale.R;
+      
+      import mx.events.FlexEvent;
+      import mx.utils.StringUtil;
+      
+      [Bindable]
+      public var modem:Modem;
+      
+
+      public static const EDIT:String="edit";
+      public static const CREATE:String="create";
+      
+      [Bindable]
+      public var action:String="Add";
+      
+      
+      private function save():void
+      {
+        //do check!!!!
+        if(nameTxt.text=="")
+        {
+          AlertPopUp.show(R.get('MODEM_NO_NAME'));
+          return
+        }
+        
+        if(number.text=="")
+        {
+          AlertPopUp.show(R.get('MODEM_NO_NUMBER'));
+          return
+        }
+        
+        if(pin.text!="" && pin.text.length<4)
+        {
+          AlertPopUp.show(R.get('MODEM_INVALID_PIN'));
+          return
+        }
+        var re:RegExp = new RegExp("^(COM\d+|\/dev\/.+)$", "g");
+        if(!port.text.match(re).length>0) //TODO > PORT VALIDATION
+        {
+          AlertPopUp.show(R.get('MODEM_INVALID_PORT'));
+          return
+        }
+        
+        //check 
+
+          
+        modem.name =  nameTxt.text;
+        modem.number = number.text;
+        modem.port=port.text
+        modem.pin=pin.text
+        if(action==CREATE)
+        {
+        ModemManager.instance.addModem(ObjectUtils.toHash(modem), 
+          function(i:Modem):void {
+          ModemManager.instance.dispatchEvent(new DataLoadedEvent(DataLoadedEvent.DATA_LOADED));
+          close();});
+        }
+        else
+        {
+          ModemManager.instance.updateModem((modem),
+            function(i:Modem):void {
+              ModemManager.instance.dispatchEvent(new DataLoadedEvent(DataLoadedEvent.DATA_LOADED));
+              close();});
+        }
+      }
+      
+      private function init(event:FlexEvent):void
+      {
+        if(action==CREATE)
+        modem = new Modem(Modem.defaultModem());     
+      }
+    ]]>
+  </fx:Script>
+  
+  <s:Form left="5" right="5" bottom="10" skinClass="it.ht.rcs.console.skins.CompactForm">
+    
+    <s:FormItem label="{R.get('NAME')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:TextInput id="nameTxt" width="200" text="{modem.name}"/>
+    </s:FormItem>
+    
+    <s:FormItem label="{R.get('NUMBER')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:TextInput id="number" width="200" text="{modem.number}" restrict="0-9 +"/>
+    </s:FormItem>
+    
+    <s:FormItem label="{R.get('PIN')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:TextInput id="pin" width="200" text="{modem.pin}" restrict="0-9"/>
+    </s:FormItem>
+ 
+    <s:FormItem label="{R.get('PORT')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:TextInput id="port" width="100" text="{modem.port}" />
+    </s:FormItem>
+
+  </s:Form>
+
+</utils:TitleWindowSaveCancel>

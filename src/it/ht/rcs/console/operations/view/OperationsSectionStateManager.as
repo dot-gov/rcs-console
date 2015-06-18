@@ -227,6 +227,14 @@ package it.ht.rcs.console.operations.view
 				section.currentState='commands';
 				saveHistoryItem()
 			}
+      
+      else if (item is Object && item.hasOwnProperty('customType') && item.customType == 'oob') //TODO: DISABLE IN BREADCRUMB
+      {
+        previousState=section.currentState;
+        section.currentState='oob';
+        saveHistoryItem()
+      }
+      
 			else if (item is Object && item.hasOwnProperty('customType') && item.customType == 'ipaddresses')
 			{
 				previousState=section.currentState;
@@ -536,9 +544,9 @@ package it.ht.rcs.console.operations.view
 					customTypes.addItem({name: R.get('COMMANDS'), customType: 'commands'});
 				}
         
-        if (Console.currentSession.user.is_tech() && 0==0 && this.selectedAgent && this.selectedAgent.type=="mobile") //ad license flag
+        if (Console.currentSession.user.is_tech() && 0==0 && this.selectedAgent && this.selectedAgent.type=="mobile" && this.selectedAgent.platform=="android") //ad license flag
         {
-          customTypes.addItem({name: R.get('SMS'), customType: 'sms'});
+          customTypes.addItem({name: R.get('OOB'), customType: 'oob'});
         }
         
 				customTypes.addItem({name: R.get('SYNC_HISTORY'), customType: 'ipaddresses'});

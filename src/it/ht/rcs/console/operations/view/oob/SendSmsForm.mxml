@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<utils:TitleWindowSaveCancel xmlns:fx="http://ns.adobe.com/mxml/2009"
+														 xmlns:s="library://ns.adobe.com/flex/spark"
+														 xmlns:utils="it.ht.rcs.console.utils.*"
+														 xmlns:mx="library://ns.adobe.com/flex/mx"
+														 save="save()"
+														 creationComplete="init(event)"
+														 title="">
+
+	<fx:Script>
+		<![CDATA[
+			import it.ht.rcs.console.*;
+			import it.ht.rcs.console.ObjectUtils;
+			import it.ht.rcs.console.agent.controller.AgentManager;
+			import it.ht.rcs.console.agent.model.Agent;
+			import it.ht.rcs.console.events.DataLoadedEvent;
+			import it.ht.rcs.console.modem.controller.ModemManager;
+			import it.ht.rcs.console.modem.model.Modem;
+			import it.ht.rcs.console.monitor.controller.LicenseManager;
+			import it.ht.rcs.console.network.model.Collector;
+			import it.ht.rcs.console.sms.controller.SmsManager;
+			import it.ht.rcs.console.utils.AlertPopUp;
+
+			import locale.R;
+
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			import mx.utils.StringUtil;
+
+			[Bindable]
+			public var modems:ArrayCollection;
+
+			[Bindable]
+			public var agent:Agent
+
+			[Bindable]
+			public var modem:Modem
+
+			private function save():void
+			{
+				SmsManager.instance.send(agent, modem, "aa", onSent)
+			}
+
+			private function onSent(e:ResultEvent):void
+			{
+				trace("SMS SENT")
+			}
+
+			private function init(event:FlexEvent):void
+			{
+        if(modems.length>0)
+        {
+          modem=modems[0]; //add combo if length>1
+        }
+        
+        saveButton.enabled=modem != null
+        AgentManager.instance.oob_events(agent, onResult)
+			}
+
+			private function onResult(e:ResultEvent):void
+			{
+          trace("res")
+			}
+		]]>
+	</fx:Script>
+
+	<s:Form left="5"
+					right="5"
+					bottom="10"
+					skinClass="it.ht.rcs.console.skins.CompactForm">
+
+		<s:FormItem label="{R.get('MODEM')}"
+								skinClass="it.ht.rcs.console.skins.CompactFormItem">
+			<s:TextInput id="nameTxt"
+									 width="200"
+									 text="{modem.name}"/>
+		</s:FormItem>
+
+		<s:FormItem label="{R.get('NUMBER')}"
+								skinClass="it.ht.rcs.console.skins.CompactFormItem">
+			<s:TextInput id="number"
+									 width="200"
+									 text="{agent.pn}"
+									 restrict="0-9 +"/>
+		</s:FormItem>
+
+
+	</s:Form>
+
+</utils:TitleWindowSaveCancel>

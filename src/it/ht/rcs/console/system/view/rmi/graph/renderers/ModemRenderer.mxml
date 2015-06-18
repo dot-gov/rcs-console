@@ -1,0 +1,248 @@
+<renderers:NetworkObject xmlns:fx="http://ns.adobe.com/mxml/2009"
+												 xmlns:s="library://ns.adobe.com/flex/spark"
+												 xmlns:mx="library://ns.adobe.com/flex/mx"
+												 xmlns:renderers="it.ht.rcs.console.system.view.rmi.graph.renderers.*"
+												 transitions="{[tr1, tr2]}"
+												 width="{WIDTH}"
+												 height="{HEIGHT}"
+												 click="onClick(event)"
+												 mouseDown="onMouseDown(event)"
+												 mouseOver="onMouseOver(event)"
+												 useHandCursor="true"
+												 buttonMode="true">
+
+	<renderers:layout>
+		<s:VerticalLayout gap="6"
+											horizontalAlign="center"
+											paddingBottom="5"
+											paddingLeft="5"
+											paddingRight="5"
+											paddingTop="5"
+											verticalAlign="top"/>
+	</renderers:layout>
+
+	<fx:Script>
+		<![CDATA[
+			import it.ht.rcs.console.modem.model.Modem;
+			import it.ht.rcs.console.monitor.controller.MonitorManager;
+			import it.ht.rcs.console.shard.controller.ShardManager;
+			import it.ht.rcs.console.shard.model.Shard;
+			import it.ht.rcs.console.shard.model.ShardStat;
+			import it.ht.rcs.console.utils.Size;
+
+			import locale.R;
+
+			import spark.components.Label;
+
+			private static const WIDTH:Number=130; // 5*2 (padding) + 120 (width of label)
+			private static const HEIGHT:Number=66 + 26; // 5*2 (padding) + 50 (height of container) + 6 (gap) + 26 (height of label)
+
+			private static const NORMAL_COLOR:Number=0xffffff;
+			private static const SELECTED_COLOR:Number=0xa8c6ee;
+
+			public static const SELECTED:String="selected";
+
+
+
+
+			[Bindable]
+			public var _modem:Modem;
+			[Bindable]
+			private var _stats:ShardStat;
+
+
+			private var _selected:Boolean
+
+			[Embed(source='/img/NEW/modem.png')]
+			private static const modemIcon:Class;
+
+			[Embed(source='/img/NEW/ok.png')]
+			private static const okIcon:Class;
+			[Embed(source='/img/NEW/error.png')]
+			private static const errorIcon:Class;
+			[Embed(source='/img/NEW/unknown.png')]
+			private const unknownIcon:Class;
+			[Embed(source='/img/NEW/warn.png')]
+			private const warnIcon:Class;
+
+			[Bindable]
+			private var status:Object
+
+
+			private function getStatusIcon():Class
+			{
+				/*	if (collector.type == 'remote' && !collector.enabled)
+				return unknownIcon;*/
+
+				if (status == null)
+					return unknownIcon;
+
+				switch (status.status)
+				{
+					case '0':
+						return okIcon;
+					case '1':
+						return warnIcon;
+					case '2':
+						return errorIcon;
+					default:
+						return errorIcon;
+				}
+
+			}
+
+			private function onMouseOver(me:MouseEvent):void
+			{
+				me.stopPropagation();
+				Mouse.cursor=MouseCursor.AUTO;
+			}
+
+			private function onMouseDown(me:MouseEvent):void
+			{
+				me.stopPropagation();
+			}
+
+			private function onClick(me:MouseEvent):void
+			{
+				me.stopPropagation();
+				if (!selected)
+					selected=true
+
+			}
+
+
+			public function set modem(value:Modem):void
+			{
+				_modem=value;
+				status=MonitorManager.instance.getStatusByAddress(modem.port)
+				//statusIcon.source=getStatusIcon()
+			}
+
+			public function get modem():Modem
+			{
+				return _modem;
+
+			}
+
+			public function get selected():Boolean
+			{
+				return _selected;
+			}
+
+			public function set selected(value:Boolean):void
+			{
+
+				_selected=value;
+				currentState=selected ? 'expanded' : 'collapsed';
+				if (selected)
+				{
+					container.setStyle("backgroundColor", SELECTED_COLOR)
+					dispatchEvent(new Event(SELECTED))
+				}
+				else
+					container.setStyle("backgroundColor", NORMAL_COLOR)
+			}
+		]]>
+	</fx:Script>
+
+	<renderers:states>
+		<s:State name="collapsed"/>
+		<s:State name="expanded"/>
+	</renderers:states>
+
+	<s:BorderContainer id="container"
+										 width="50"
+										 height="50"
+										 backgroundColor="{NORMAL_COLOR}"
+										 borderColor="#dddddd"
+										 cornerRadius="10"
+										 width.expanded="150"
+										 height.expanded="150">
+
+		<s:BitmapImage right="-6"
+									 top="-6"
+									 depth="10"
+									 id="statusIcon"
+									 source="{getStatusIcon()}"/>
+
+		<s:VGroup width="{container.width}"
+							height="{container.height}"
+							clipAndEnableScrolling="true">
+			<s:HGroup paddingBottom="0"
+								paddingLeft="0"
+								paddingTop="0"
+								paddingRight="0"
+								width="100%">
+				<s:BitmapImage source="{modemIcon}"/>
+				<s:Spacer width="100%"/>
+
+			</s:HGroup>
+
+			<s:Label paddingLeft="10"
+							 fontSize="12"
+							 maxDisplayedLines="1"
+							 text="{_modem.number}"
+							 visible="{_modem.number!=null}"
+							 includeInLayout="{_modem.number!=null}"/>
+			<s:Label paddingLeft="10"
+							 fontSize="12"
+							 maxDisplayedLines="1"
+							 text="{R.get('PORT') +': '+ _modem.port}"/>
+			<s:Label paddingLeft="10"
+							 fontSize="12"
+							 maxDisplayedLines="1"
+							 text="{R.get('PIN') +': '+ _modem.pin}"
+							 visible="{_modem.pin!=null}"
+							 includeInLayout="{_modem.pin!=null}"/>
+			<s:HGroup width="100%"
+								paddingLeft="10"
+								verticalAlign="bottom">
+
+				<s:Label paddingRight="4"
+								 fontSize="12"
+								 maxDisplayedLines="2" width="100"
+								 text="{status.info}"/>
+				<renderers:SignalRenderer visible="{status.info.indexOf('signal')!=-1}"
+																	includeInLayout="{status.info.indexOf('signal')!=-1}"
+                                  status="{status}"/>
+			</s:HGroup>
+
+
+			<s:Label paddingLeft="10"
+							 fontSize="12"
+							 maxDisplayedLines="1"
+							 text="Legacy: {_modem.legacy}"
+							 visible="{_modem.legacy}"
+							 includeInLayout="{_modem.legacy}"/>
+
+			<!--<s:TextArea visible="{_stats.ok != 1}" left="10" top="50" width="120" height="30"
+									borderVisible="false" color="#FF0000" contentBackgroundAlpha="0.0" editable="false"
+									fontSize="12" text="{_stats.errmsg}"/> -->
+
+		</s:VGroup>
+
+	</s:BorderContainer>
+
+	<s:Label width="120"
+					 maxDisplayedLines="2"
+					 text="{_modem.name}"
+					 textAlign="center"
+					 fontFamily="Myriad"
+					 fontSize="12"/>
+
+	<fx:Declarations>
+		<s:Transition id="tr1"
+									fromState="collapsed"
+									toState="expanded">
+			<s:Resize duration="150"
+								target="{container}"/>
+		</s:Transition>
+		<s:Transition id="tr2"
+									fromState="expanded"
+									toState="collapsed">
+			<s:Resize duration="150"
+								target="{container}"/>
+		</s:Transition>
+	</fx:Declarations>
+
+</renderers:NetworkObject>

@@ -10,7 +10,9 @@ package it.ht.rcs.console.main
   import it.ht.rcs.console.alert.controller.AlertManager;
   import it.ht.rcs.console.controller.Manager;
   import it.ht.rcs.console.dashboard.controller.DashboardController;
+  import it.ht.rcs.console.entities.controller.EntityManager;
   import it.ht.rcs.console.events.DataLoadedEvent;
+  import it.ht.rcs.console.modem.controller.ModemManager;
   import it.ht.rcs.console.monitor.controller.LicenseManager;
   import it.ht.rcs.console.monitor.controller.MonitorManager;
   import it.ht.rcs.console.network.controller.CollectorManager;
@@ -18,9 +20,9 @@ package it.ht.rcs.console.main
   import it.ht.rcs.console.operation.controller.OperationManager;
   import it.ht.rcs.console.search.controller.SearchManager;
   import it.ht.rcs.console.shard.controller.ShardManager;
+  import it.ht.rcs.console.sms.controller.SmsManager;
   import it.ht.rcs.console.target.controller.TargetManager;
   import it.ht.rcs.console.update.controller.CoreManager;
-  import it.ht.rcs.console.entities.controller.EntityManager;
   import it.ht.rcs.console.utils.UpdateManager;
   
   import mx.collections.ArrayList;
@@ -107,6 +109,13 @@ package it.ht.rcs.console.main
         managers.push(CollectorManager.instance);
        
       }
+      
+      if (user.is_sys())
+      {
+        managers.push(ModemManager.instance);
+        
+      }
+      
       
       if (user.is_sys_injectors() || user.is_tech_ni_rules())
       {

@@ -15,7 +15,7 @@
               xmlns:commands="it.ht.rcs.console.operations.view.commands.*"
               xmlns:ips="it.ht.rcs.console.operations.view.ips.*"
               creationComplete="init()"
-              stateChangeComplete="onStateChange(event)" >
+              stateChangeComplete="onStateChange(event)" xmlns:oob="it.ht.rcs.console.operations.view.oob.*" >
   <main:states>
     <s:State name="none"/>
     
@@ -35,6 +35,7 @@
     <s:State name="filesystem"/>
     <s:State name="info"/>
     <s:State name="commands"/>
+    <s:State name="oob"/>
     <s:State name="ipaddresses"/>
     
     <s:State name="filetransfer"/>
@@ -63,6 +64,8 @@
   <info:InfoView includeIn="info" section="{this}"/>
   
   <commands:CommandsView includeIn="commands" section="{this}"/>
+  
+  <oob:OobView includeIn="oob" section="{this}"/>
   
   <ips:IpsView includeIn="ipaddresses" section="{this}"/>
   

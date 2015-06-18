@@ -52,6 +52,7 @@
 					case 'agentConfigList':
 					case 'filetransfer':
 					case 'commands':
+          case 'oob':
 					case 'ipaddresses':
 						return 'singleAgent';
 				}
@@ -251,6 +252,18 @@
 										 paddingRight="0"
 										 icon="@Embed('/img/NEW/commands_16.png')"/>
 		</s:HGroup>
+    
+    <s:HGroup visible="{section.currentState == 'oob'}" enabled="{section.currentState != 'oob'}"
+              gap="3"
+              includeInLayout="{section.currentState == 'oob'}"
+              verticalAlign="middle">
+      <s:BitmapImage source="{arrow}"/>
+      <s:Spacer width="5"/>
+      <mx:LinkButton label="{R.get('OOB')}"
+                     paddingLeft="2"
+                     paddingRight="0"
+                     icon="@Embed('/img/NEW/oob_16.png')"/>
+    </s:HGroup>
 
 		<s:HGroup visible="{section.currentState == 'ipaddresses'}" enabled="{section.currentState != 'ipaddresses'}"
 							gap="3"

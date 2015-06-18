@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<utils:TitleWindowSaveCancel xmlns:fx="http://ns.adobe.com/mxml/2009"
+                            xmlns:s="library://ns.adobe.com/flex/spark"
+                            xmlns:utils="it.ht.rcs.console.utils.*"
+                            xmlns:mx="library://ns.adobe.com/flex/mx"
+                            save="save()" creationComplete="init(event)"
+                            title="{R.get('SEND_SMS_TEST')}" height="200">
+  
+  <fx:Script>
+    <![CDATA[
+      import it.ht.rcs.console.*;
+      import it.ht.rcs.console.modem.model.Modem;
+      import it.ht.rcs.console.task.controller.DownloadManager;
+      import it.ht.rcs.console.utils.AlertPopUp;
+      
+      import locale.R;
+      
+      import mx.events.FlexEvent;
+      
+      [Bindable]
+      public var modem:Modem;
+
+      private function save():void
+      {
+        if(number.text=="")
+        {
+          AlertPopUp.show(R.get('MODEM_NO_NUMBER'));
+          return
+        }
+        
+        DownloadManager.instance.createTask("testsms","", {id: modem._id, number:number.text});
+        close();
+      }
+      
+      private function init(event:FlexEvent):void
+      {
+        saveButton.label=R.get('SEND');
+      }
+    ]]>
+  </fx:Script>
+  
+  <s:Form left="5" right="5" bottom="10" skinClass="it.ht.rcs.console.skins.CompactForm">
+    
+    <s:Label  width="200" text="Send a test SMS from the selected modem to "/>
+    
+    <s:FormItem label="{R.get('FROM')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:Label id="nameTxt" width="200" text="{modem.name}"/>
+    </s:FormItem>
+    
+    <s:FormItem label="{R.get('TO')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
+      <s:TextInput id="number" width="200" text="" restrict="0-9 +"/>
+    </s:FormItem>
+
+  </s:Form>
+
+</utils:TitleWindowSaveCancel>
