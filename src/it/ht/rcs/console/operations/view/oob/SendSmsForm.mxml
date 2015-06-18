@@ -37,9 +37,12 @@
 			[Bindable]
 			public var modem:Modem
 
+
+
 			private function save():void
 			{
-				SmsManager.instance.send(agent, modem, "aa", onSent)
+				SmsManager.instance.send(agent, modem, commandsCb.selectedItem, onSent)
+         close()
 			}
 
 			private function onSent(e:ResultEvent):void
@@ -49,18 +52,33 @@
 
 			private function init(event:FlexEvent):void
 			{
-        if(modems.length>0)
-        {
-          modem=modems[0]; //add combo if length>1
-        }
-        
-        saveButton.enabled=modem != null
-        AgentManager.instance.oob_events(agent, onResult)
+				if (modems.length > 0)
+				{
+					modem=modems[0]; //add combo if length>1
+				}
+
+				saveButton.enabled=modem != null
+				AgentManager.instance.oob_events(agent, onResult)
 			}
 
 			private function onResult(e:ResultEvent):void
 			{
-          trace("res")
+				var commands:Array=JSON.parse(String(e.result)) as Array
+				if (commands && commands.length > 0)
+				{
+					commandsCb.dataProvider=new ArrayCollection(commands)
+					commandsCb.selectedIndex=0
+					noCommandsTxt.visible=false;
+					noCommandsTxt.includeInLayout=false;
+				}
+				else
+				{
+					commandsCb.visible=false;
+					commandsCb.includeInLayout=false;
+					noCommandsTxt.visible=true;
+					noCommandsTxt.includeInLayout=true;
+				}
+
 			}
 		]]>
 	</fx:Script>
@@ -76,6 +94,16 @@
 									 width="200"
 									 text="{modem.name}"/>
 		</s:FormItem>
+
+		<s:FormItem label="{R.get('COMMAND')}"
+								skinClass="it.ht.rcs.console.skins.CompactFormItem">
+			<s:ComboBox id="commandsCb"
+									width="200"/>
+		</s:FormItem>
+		<s:Label id="noCommandsTxt"
+						 text="No command found, please check agent configuration."
+						 visible="false"
+						 includeInLayout="false"/>
 
 		<s:FormItem label="{R.get('NUMBER')}"
 								skinClass="it.ht.rcs.console.skins.CompactFormItem">

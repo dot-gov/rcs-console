@@ -42,6 +42,8 @@ TODO 10.x.x
   [] persistent diventa un flag su tutte le configurazioni android e rimosso come cartella dall'albero delle configurazioni
   
   [] commands download (output troppo grande blocca console)
+  
+  [] wap push build > inserire campo modem (popolato con elenco da system) e passare modem id in configurazione
 
 ========================================================================================
 TODO x.x.x

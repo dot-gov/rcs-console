@@ -54,7 +54,12 @@
         //if(this.grid)
        // this.grid.ensureCellIsVisible(this.dataProvider.length-1);
       }
-      
+      private function receivedLabel(item:Object, column:GridColumn):String
+      {
+        if((item[column.dataField]==null || item[column.dataField]=="") && item.rr && item.direction=="out")
+          return "rr is true: message"; 
+        return item[column.dataField]
+      }
      
 
       
@@ -95,7 +100,7 @@
 										dataField="received_at"
 										headerText="{R.get('DATE_RECEIVED')}"
 										resizable="false"
-										editable="false">
+										editable="false" labelFunction="receivedLabel">
       
 			</s:GridColumn>
 			<s:GridColumn dataField="text"

@@ -24,6 +24,7 @@
       import it.ht.rcs.console.modem.controller.ModemManager;
       import it.ht.rcs.console.modem.model.Modem;
       import it.ht.rcs.console.monitor.controller.MonitorManager;
+      import it.ht.rcs.console.task.controller.DownloadManager;
       import it.ht.rcs.console.utils.AlertPopUp;
       
       import locale.R;
@@ -51,7 +52,8 @@
       
       private function onAutoDetect():void
       {
-        ModemManager.instance.autodetect()
+        //ModemManager.instance.autodetect()
+        DownloadManager.instance.createTask("autodetectmodems", "", {})
       }
       
       private function onDeleteClick():void
