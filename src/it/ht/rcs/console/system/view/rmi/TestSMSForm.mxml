@@ -41,7 +41,7 @@
   
   <s:Form left="5" right="5" bottom="10" skinClass="it.ht.rcs.console.skins.CompactForm">
     
-    <s:Label  width="200" text="Send a test SMS from the selected modem to "/>
+    <s:Label  width="100%" text="Send a test SMS from the selected modem to "/>
     
     <s:FormItem label="{R.get('FROM')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
       <s:Label id="nameTxt" width="200" text="{modem.name}"/>

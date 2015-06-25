@@ -9,6 +9,8 @@
   
   <fx:Script>
     <![CDATA[
+      import com.adobe.crypto.MD5;
+      
       import it.ht.rcs.console.operations.view.configuration.advanced.ConfigurationGraph;
       
       import locale.R;
@@ -77,8 +79,14 @@
         event.enabled = eventEnabled.selected;
         event.desc = desc.text;
         event.event = currentState;
+        
+      
         Cleaner.clean(event);
         currentData.commit();
+        if(event.event == 'oob')
+        {
+          event.text=MD5.hash(event.desc)
+        }
         close();
         
         adjustConnections();

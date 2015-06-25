@@ -30,57 +30,65 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.utils
+package com.adobe.air.logging
 {
-	import flash.utils.Dictionary;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
 	
-	public class DictionaryUtil
+	import mx.core.mx_internal;
+	import mx.logging.targets.LineFormattedTarget;
+	
+	use namespace mx_internal;
+
+	/**
+	 * An Adobe AIR only class that provides a log target for the Flex logging
+	 * framework, that logs files to a file on the user's system.
+	 * 
+	 * This class will only work when running within Adobe AIR>
+	 */
+	public class FileTarget extends LineFormattedTarget
 	{
+		private const DEFAULT_LOG_PATH:String = "app-storage:/application.log";
 		
-		/**
-		*	Returns an Array of all keys within the specified dictionary.	
-		* 
-		* 	@param d The Dictionary instance whose keys will be returned.
-		* 
-		* 	@return Array of keys contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getKeys(d:Dictionary):Array
+		private var log:File;
+		
+		public function FileTarget(logFile:File = null)
 		{
-			var a:Array = new Array();
-			
-			for (var key:Object in d)
+			if(logFile != null)
 			{
-				a.push(key);
+				log = logFile;
 			}
-			
-			return a;
+			else
+			{
+				log = new File(DEFAULT_LOG_PATH);
+			}
 		}
 		
-		/**
-		*	Returns an Array of all values within the specified dictionary.		
-		* 
-		* 	@param d The Dictionary instance whose values will be returned.
-		* 
-		* 	@return Array of values contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getValues(d:Dictionary):Array
+		public function get logURI():String
 		{
-			var a:Array = new Array();
-			
-			for each (var value:Object in d)
-			{
-				a.push(value);
-			}
-			
-			return a;
+			return log.url;
+		}
+		
+		mx_internal override function internalLog(message:String):void
+	    {
+			write(message);
+	    }		
+		
+		private function write(msg:String):void
+		{		
+			var fs:FileStream = new FileStream();
+				fs.open(log, FileMode.APPEND);
+				fs.writeUTFBytes(msg + File.lineEnding);
+				fs.close();
+		}	
+		
+		public function clear():void
+		{
+			var fs:FileStream = new FileStream();
+				fs.open(log, FileMode.WRITE);
+				fs.writeUTFBytes("");
+				fs.close();			
 		}
 		
 	}

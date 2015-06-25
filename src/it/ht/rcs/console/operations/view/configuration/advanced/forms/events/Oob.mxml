@@ -12,15 +12,10 @@
       
       private function init():void
       {
-        text.text = event.text;
+       
       }
       
-      override public function commit():void
-      {
     
-        event.text = text.text;
-      }
-      
     
     ]]>
   </fx:Script>
@@ -28,16 +23,8 @@
   <s:Label width="280" lineHeight="16"
            text="{R.get('CONFIG_HELP_OOB_EVENT')}"/>
   
-  <s:Form>
-    
-   
-    
-    <s:FormItem label="{R.get('TEXT')}">
-      <s:TextInput id="text" width="160"/>
-    </s:FormItem>
   
-  </s:Form>
-  
+ 
   <fx:Declarations>
    
   </fx:Declarations>

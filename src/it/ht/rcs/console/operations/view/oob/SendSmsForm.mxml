@@ -5,7 +5,7 @@
 														 xmlns:mx="library://ns.adobe.com/flex/mx"
 														 save="save()"
 														 creationComplete="init(event)"
-														 title="">
+														 title="{R.get('SMS_NEW')}">
 
 	<fx:Script>
 		<![CDATA[
@@ -20,9 +20,9 @@
 			import it.ht.rcs.console.network.model.Collector;
 			import it.ht.rcs.console.sms.controller.SmsManager;
 			import it.ht.rcs.console.utils.AlertPopUp;
-
+			
 			import locale.R;
-
+			
 			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.ResultEvent;
@@ -41,32 +41,41 @@
 
 			private function save():void
 			{
-				SmsManager.instance.send(agent, modem, commandsCb.selectedItem, onSent)
-         close()
+				SmsManager.instance.send(agent, modemsCb.selectedItem, commandsCb.selectedItem, onSent)
+				//
+        sendingTxt.visible=true;
+        saveButton.enabled=false
+        cancelButton.enabled=false;
 			}
 
 			private function onSent(e:ResultEvent):void
 			{
 				trace("SMS SENT")
+        dispatchEvent(new Event("sent"))
+        close()
 			}
 
 			private function init(event:FlexEvent):void
 			{
-				if (modems.length > 0)
+				/* if (modems.length > 0)
 				{
 					modem=modems[0]; //add combo if length>1
-				}
-
-				saveButton.enabled=modem != null
+				} */
+        this.saveButton.label=R.get('SEND')
+				modemsCb.dataProvider=modems
+        modemsCb.selectedIndex=0
+				saveButton.enabled=modems != null
 				AgentManager.instance.oob_events(agent, onResult)
+        sendingTxt.visible=false;
 			}
 
 			private function onResult(e:ResultEvent):void
 			{
-				var commands:Array=JSON.parse(String(e.result)) as Array
+				var commands:ArrayCollection=e.result as ArrayCollection
+				commandsCb.labelField="name"
 				if (commands && commands.length > 0)
 				{
-					commandsCb.dataProvider=new ArrayCollection(commands)
+					commandsCb.dataProvider=commands
 					commandsCb.selectedIndex=0
 					noCommandsTxt.visible=false;
 					noCommandsTxt.includeInLayout=false;
@@ -90,14 +99,13 @@
 
 		<s:FormItem label="{R.get('MODEM')}"
 								skinClass="it.ht.rcs.console.skins.CompactFormItem">
-			<s:TextInput id="nameTxt"
-									 width="200"
-									 text="{modem.name}"/>
+			<s:DropDownList id="modemsCb" width="200"
+											labelField="name"/>
 		</s:FormItem>
 
 		<s:FormItem label="{R.get('COMMAND')}"
 								skinClass="it.ht.rcs.console.skins.CompactFormItem">
-			<s:ComboBox id="commandsCb"
+			<s:DropDownList id="commandsCb"
 									width="200"/>
 		</s:FormItem>
 		<s:Label id="noCommandsTxt"
@@ -112,8 +120,11 @@
 									 text="{agent.pn}"
 									 restrict="0-9 +"/>
 		</s:FormItem>
+    
 
 
 	</s:Form>
-
+  <s:Label id="sendingTxt" fontWeight="bold" textAlign="center" top="130"
+           width="100%"
+           text="Sending Event... Please wait"/>
 </utils:TitleWindowSaveCancel>

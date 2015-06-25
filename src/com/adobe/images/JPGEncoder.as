@@ -1,14 +1,43 @@
+/*
+  Copyright (c) 2008, Adobe Systems Incorporated
+  All rights reserved.
+
+  Redistribution and use in source and binary forms, with or without 
+  modification, are permitted provided that the following conditions are
+  met:
+
+  * Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+  
+  * Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the 
+    documentation and/or other materials provided with the distribution.
+  
+  * Neither the name of Adobe Systems Incorporated nor the names of its 
+    contributors may be used to endorse or promote products derived from 
+    this software without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+  IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
 package com.adobe.images
 {
 	import flash.geom.*;
 	import flash.display.*;
-	import flash.util.*;
-
-	public class BitString {
-		public var len:int = 0;
-		public var val:int = 0;
-	};
+	import flash.utils.*;
 	
+	/**
+	 * Class that converts BitmapData into a valid JPEG
+	 */		
 	public class JPGEncoder
 	{
 
@@ -30,8 +59,10 @@ package com.adobe.images
 		private var fdtbl_Y:Array = new Array(64);
 		private var fdtbl_UV:Array = new Array(64);
 	
-		private function initQuantTables(sf:int):Void
+		private function initQuantTables(sf:int):void
 		{
+			var i:int;
+			var t:Number;
 			var YQT:Array = [
 				16, 11, 10, 16, 24, 40, 51, 61,
 				12, 12, 14, 19, 26, 58, 60, 55,
@@ -42,8 +73,8 @@ package com.adobe.images
 				49, 64, 78, 87,103,121,120,101,
 				72, 92, 95, 98,112,100,103, 99
 			];
-			for (var i:int = 0; i < 64; i++) {
-				var t:Number = Math.floor((YQT[i]*sf+50)/100);
+			for (i = 0; i < 64; i++) {
+				t = Math.floor((YQT[i]*sf+50)/100);
 				if (t < 1) {
 					t = 1;
 				} else if (t > 255) {
@@ -61,8 +92,8 @@ package com.adobe.images
 				99, 99, 99, 99, 99, 99, 99, 99,
 				99, 99, 99, 99, 99, 99, 99, 99
 			];
-			for (var i:int = 0; i < 64; i++) {
-				var t:Number = Math.floor((UVQT[i]*sf+50)/100);
+			for (i = 0; i < 64; i++) {
+				t = Math.floor((UVQT[i]*sf+50)/100);
 				if (t < 1) {
 					t = 1;
 				} else if (t > 255) {
@@ -74,7 +105,7 @@ package com.adobe.images
 				1.0, 1.387039845, 1.306562965, 1.175875602,
 				1.0, 0.785694958, 0.541196100, 0.275899379
 			];
-			var i:int = 0;
+			i = 0;
 			for (var row:int = 0; row < 8; row++)
 			{
 				for (var col:int = 0; col < 8; col++)
@@ -163,7 +194,7 @@ package com.adobe.images
 			0xf9,0xfa
 		];
 	
-		private function initHuffmanTbl():Void
+		private function initHuffmanTbl():void
 		{
 			YDC_HT = computeHuffmanTbl(std_dc_luminance_nrcodes,std_dc_luminance_values);
 			UVDC_HT = computeHuffmanTbl(std_dc_chrominance_nrcodes,std_dc_chrominance_values);
@@ -174,20 +205,21 @@ package com.adobe.images
 		private var bitcode:Array = new Array(65535);
 		private var category:Array = new Array(65535);
 	
-		private function initCategoryNumber()
+		private function initCategoryNumber():void
 		{
 			var nrlower:int = 1;
 			var nrupper:int = 2;
+			var nr:int;
 			for (var cat:int=1; cat<=15; cat++) {
 				//Positive numbers
-				for (var nr:int=nrlower; nr<nrupper; nr++) {
+				for (nr=nrlower; nr<nrupper; nr++) {
 					category[32767+nr] = cat;
 					bitcode[32767+nr] = new BitString();
 					bitcode[32767+nr].len = cat;
 					bitcode[32767+nr].val = nr;
 				}
 				//Negative numbers
-				for (var nr:int=-(nrupper-1); nr<=-nrlower; nr++) {
+				for (nr=-(nrupper-1); nr<=-nrlower; nr++) {
 					category[32767+nr] = cat;
 					bitcode[32767+nr] = new BitString();
 					bitcode[32767+nr].len = cat;
@@ -204,7 +236,7 @@ package com.adobe.images
 		private var bytenew:int = 0;
 		private var bytepos:int = 7;
 	
-		private function writeBits(bs:BitString):Void
+		private function writeBits(bs:BitString):void
 		{
 			var value:int = bs.val;
 			var posval:int = bs.len-1;
@@ -228,12 +260,12 @@ package com.adobe.images
 			}
 		}
 	
-		private function writeByte(value:int)
+		private function writeByte(value:int):void
 		{
 			byteout.writeByte(value);
 		}
 	
-		private function writeWord(value:int)
+		private function writeWord(value:int):void
 		{
 			writeByte((value>>8)&0xFF);
 			writeByte((value   )&0xFF);
@@ -243,28 +275,32 @@ package com.adobe.images
 	
 		private function fDCTQuant(data:Array, fdtbl:Array):Array
 		{
+			var tmp0:Number, tmp1:Number, tmp2:Number, tmp3:Number, tmp4:Number, tmp5:Number, tmp6:Number, tmp7:Number;
+			var tmp10:Number, tmp11:Number, tmp12:Number, tmp13:Number;
+			var z1:Number, z2:Number, z3:Number, z4:Number, z5:Number, z11:Number, z13:Number;
+			var i:int;
 			/* Pass 1: process rows. */
 			var dataOff:int=0;
-			for (var i:int=0; i<8; i++) {
-				var tmp0:Number = data[dataOff+0] + data[dataOff+7];
-				var tmp7:Number = data[dataOff+0] - data[dataOff+7];
-				var tmp1:Number = data[dataOff+1] + data[dataOff+6];
-				var tmp6:Number = data[dataOff+1] - data[dataOff+6];
-				var tmp2:Number = data[dataOff+2] + data[dataOff+5];
-				var tmp5:Number = data[dataOff+2] - data[dataOff+5];
-				var tmp3:Number = data[dataOff+3] + data[dataOff+4];
-				var tmp4:Number = data[dataOff+3] - data[dataOff+4];
+			for (i=0; i<8; i++) {
+				tmp0 = data[dataOff+0] + data[dataOff+7];
+				tmp7 = data[dataOff+0] - data[dataOff+7];
+				tmp1 = data[dataOff+1] + data[dataOff+6];
+				tmp6 = data[dataOff+1] - data[dataOff+6];
+				tmp2 = data[dataOff+2] + data[dataOff+5];
+				tmp5 = data[dataOff+2] - data[dataOff+5];
+				tmp3 = data[dataOff+3] + data[dataOff+4];
+				tmp4 = data[dataOff+3] - data[dataOff+4];
 	
 				/* Even part */
-				var tmp10:Number = tmp0 + tmp3;	/* phase 2 */
-				var tmp13:Number = tmp0 - tmp3;
-				var tmp11:Number = tmp1 + tmp2;
-				var tmp12:Number = tmp1 - tmp2;
+				tmp10 = tmp0 + tmp3;	/* phase 2 */
+				tmp13 = tmp0 - tmp3;
+				tmp11 = tmp1 + tmp2;
+				tmp12 = tmp1 - tmp2;
 	
 				data[dataOff+0] = tmp10 + tmp11; /* phase 3 */
 				data[dataOff+4] = tmp10 - tmp11;
 	
-				var z1:Number = (tmp12 + tmp13) * 0.707106781; /* c4 */
+				z1 = (tmp12 + tmp13) * 0.707106781; /* c4 */
 				data[dataOff+2] = tmp13 + z1; /* phase 5 */
 				data[dataOff+6] = tmp13 - z1;
 	
@@ -274,13 +310,13 @@ package com.adobe.images
 				tmp12 = tmp6 + tmp7;
 	
 				/* The rotator is modified from fig 4-8 to avoid extra negations. */
-				var z5:Number = (tmp10 - tmp12) * 0.382683433; /* c6 */
-				var z2:Number = 0.541196100 * tmp10 + z5; /* c2-c6 */
-				var z4:Number = 1.306562965 * tmp12 + z5; /* c2+c6 */
-				var z3:Number = tmp11 * 0.707106781; /* c4 */
+				z5 = (tmp10 - tmp12) * 0.382683433; /* c6 */
+				z2 = 0.541196100 * tmp10 + z5; /* c2-c6 */
+				z4 = 1.306562965 * tmp12 + z5; /* c2+c6 */
+				z3 = tmp11 * 0.707106781; /* c4 */
 	
-				var z11:Number = tmp7 + z3;	/* phase 5 */
-				var z13:Number = tmp7 - z3;
+				z11 = tmp7 + z3;	/* phase 5 */
+				z13 = tmp7 - z3;
 	
 				data[dataOff+5] = z13 + z2;	/* phase 6 */
 				data[dataOff+3] = z13 - z2;
@@ -292,26 +328,26 @@ package com.adobe.images
 	
 			/* Pass 2: process columns. */
 			dataOff = 0;
-			for (var i:int=0; i<8; i++) {
-				var tmp0:Number = data[dataOff+ 0] + data[dataOff+56];
-				var tmp7:Number = data[dataOff+ 0] - data[dataOff+56];
-				var tmp1:Number = data[dataOff+ 8] + data[dataOff+48];
-				var tmp6:Number = data[dataOff+ 8] - data[dataOff+48];
-				var tmp2:Number = data[dataOff+16] + data[dataOff+40];
-				var tmp5:Number = data[dataOff+16] - data[dataOff+40];
-				var tmp3:Number = data[dataOff+24] + data[dataOff+32];
-				var tmp4:Number = data[dataOff+24] - data[dataOff+32];
+			for (i=0; i<8; i++) {
+				tmp0 = data[dataOff+ 0] + data[dataOff+56];
+				tmp7 = data[dataOff+ 0] - data[dataOff+56];
+				tmp1 = data[dataOff+ 8] + data[dataOff+48];
+				tmp6 = data[dataOff+ 8] - data[dataOff+48];
+				tmp2 = data[dataOff+16] + data[dataOff+40];
+				tmp5 = data[dataOff+16] - data[dataOff+40];
+				tmp3 = data[dataOff+24] + data[dataOff+32];
+				tmp4 = data[dataOff+24] - data[dataOff+32];
 	
 				/* Even part */
-				var tmp10:Number = tmp0 + tmp3;	/* phase 2 */
-				var tmp13:Number = tmp0 - tmp3;
-				var tmp11:Number = tmp1 + tmp2;
-				var tmp12:Number = tmp1 - tmp2;
+				tmp10 = tmp0 + tmp3;	/* phase 2 */
+				tmp13 = tmp0 - tmp3;
+				tmp11 = tmp1 + tmp2;
+				tmp12 = tmp1 - tmp2;
 	
 				data[dataOff+ 0] = tmp10 + tmp11; /* phase 3 */
 				data[dataOff+32] = tmp10 - tmp11;
 	
-				var z1:Number = (tmp12 + tmp13) * 0.707106781; /* c4 */
+				z1 = (tmp12 + tmp13) * 0.707106781; /* c4 */
 				data[dataOff+16] = tmp13 + z1; /* phase 5 */
 				data[dataOff+48] = tmp13 - z1;
 	
@@ -321,13 +357,13 @@ package com.adobe.images
 				tmp12 = tmp6 + tmp7;
 	
 				/* The rotator is modified from fig 4-8 to avoid extra negations. */
-				var z5:Number = (tmp10 - tmp12) * 0.382683433; /* c6 */
-				var z2:Number = 0.541196100 * tmp10 + z5; /* c2-c6 */
-				var z4:Number = 1.306562965 * tmp12 + z5; /* c2+c6 */
-				var z3:Number= tmp11 * 0.707106781; /* c4 */
+				z5 = (tmp10 - tmp12) * 0.382683433; /* c6 */
+				z2 = 0.541196100 * tmp10 + z5; /* c2-c6 */
+				z4 = 1.306562965 * tmp12 + z5; /* c2+c6 */
+				z3 = tmp11 * 0.707106781; /* c4 */
 	
-				var z11:Number = tmp7 + z3;	/* phase 5 */
-				var z13:Number = tmp7 - z3;
+				z11 = tmp7 + z3;	/* phase 5 */
+				z13 = tmp7 - z3;
 	
 				data[dataOff+40] = z13 + z2; /* phase 6 */
 				data[dataOff+24] = z13 - z2;
@@ -338,7 +374,7 @@ package com.adobe.images
 			}
 	
 			// Quantize/descale the coefficients
-			for (var i:int=0; i<64; i++) {
+			for (i=0; i<64; i++) {
 				// Apply the quantization and scaling factor & Round to nearest integer
 				data[i] = Math.round((data[i]*fdtbl[i]));
 			}
@@ -347,7 +383,7 @@ package com.adobe.images
 	
 		// Chunk writing
 	
-		private function writeAPP0():Void
+		private function writeAPP0():void
 		{
 			writeWord(0xFFE0); // marker
 			writeWord(16); // length
@@ -365,7 +401,7 @@ package com.adobe.images
 			writeByte(0); // thumbnheight
 		}
 	
-		private function writeSOF0(width:int, height:int):Void
+		private function writeSOF0(width:int, height:int):void
 		{
 			writeWord(0xFFC0); // marker
 			writeWord(17);   // length, truecolor YUV JPG
@@ -384,59 +420,61 @@ package com.adobe.images
 			writeByte(1);    // QTV
 		}
 	
-		private function writeDQT():Void
+		private function writeDQT():void
 		{
 			writeWord(0xFFDB); // marker
 			writeWord(132);	   // length
 			writeByte(0);
-			for (var i:int=0; i<64; i++) {
+			var i:int;
+			for (i=0; i<64; i++) {
 				writeByte(YTable[i]);
 			}
 			writeByte(1);
-			for (var i:int=0; i<64; i++) {
+			for (i=0; i<64; i++) {
 				writeByte(UVTable[i]);
 			}
 		}
 	
-		private function writeDHT():Void
+		private function writeDHT():void
 		{
 			writeWord(0xFFC4); // marker
 			writeWord(0x01A2); // length
+			var i:int;
 	
 			writeByte(0); // HTYDCinfo
-			for (var i:int=0; i<16; i++) {
+			for (i=0; i<16; i++) {
 				writeByte(std_dc_luminance_nrcodes[i+1]);
 			}
-			for (var i:int=0; i<=11; i++) {
+			for (i=0; i<=11; i++) {
 				writeByte(std_dc_luminance_values[i]);
 			}
 	
 			writeByte(0x10); // HTYACinfo
-			for (var i:int=0; i<16; i++) {
+			for (i=0; i<16; i++) {
 				writeByte(std_ac_luminance_nrcodes[i+1]);
 			}
-			for (var i:int=0; i<=161; i++) {
+			for (i=0; i<=161; i++) {
 				writeByte(std_ac_luminance_values[i]);
 			}
 	
 			writeByte(1); // HTUDCinfo
-			for (var i:int=0; i<16; i++) {
+			for (i=0; i<16; i++) {
 				writeByte(std_dc_chrominance_nrcodes[i+1]);
 			}
-			for (var i:int=0; i<=11; i++) {
+			for (i=0; i<=11; i++) {
 				writeByte(std_dc_chrominance_values[i]);
 			}
 	
 			writeByte(0x11); // HTUACinfo
-			for (var i:int=0; i<16; i++) {
+			for (i=0; i<16; i++) {
 				writeByte(std_ac_chrominance_nrcodes[i+1]);
 			}
-			for (var i:int=0; i<=161; i++) {
+			for (i=0; i<=161; i++) {
 				writeByte(std_ac_chrominance_values[i]);
 			}
 		}
 	
-		private function writeSOS():Void
+		private function writeSOS():void
 		{
 			writeWord(0xFFDA); // marker
 			writeWord(12); // length
@@ -453,16 +491,17 @@ package com.adobe.images
 		}
 	
 		// Core processing
-		var DU:Array = new Array(64);
+		private var DU:Array = new Array(64);
 	
 		private function processDU(CDU:Array, fdtbl:Array, DC:Number, HTDC:Array, HTAC:Array):Number
 		{
 			var EOB:BitString = HTAC[0x00];
 			var M16zeroes:BitString = HTAC[0xF0];
+			var i:int;
 	
 			var DU_DCT:Array = fDCTQuant(CDU, fdtbl);
 			//ZigZag reorder
-			for (var i:int=0;i<64;i++) {
+			for (i=0;i<64;i++) {
 				DU[ZigZag[i]]=DU_DCT[i];
 			}
 			var Diff:int = DU[0] - DC; DC = DU[0];
@@ -482,7 +521,7 @@ package com.adobe.images
 				writeBits(EOB);
 				return DC;
 			}
-			var i:int = 1;
+			i = 1;
 			while ( i <= end0pos ) {
 				var startpos:int = i;
 				for (; (DU[i]==0) && (i<=end0pos); i++) {
@@ -508,7 +547,7 @@ package com.adobe.images
 		private var UDU:Array = new Array(64);
 		private var VDU:Array = new Array(64);
 	
-		private function RGB2YUV(img:BitmapData, xpos:int, ypos:int)
+		private function RGB2YUV(img:BitmapData, xpos:int, ypos:int):void
 		{
 			var pos:int=0;
 			for (var y:int=0; y<8; y++) {
@@ -525,7 +564,16 @@ package com.adobe.images
 			}
 		}
 	
-		public function JPEGEncoder(quality:Number = 50)
+		/**
+		 * Constructor for JPEGEncoder class
+		 *
+		 * @param quality The quality level between 1 and 100 that detrmines the
+		 * level of compression used in the generated JPEG
+		 * @langversion ActionScript 3.0
+		 * @playerversion Flash 9.0
+		 * @tiptext
+		 */		
+		public function JPGEncoder(quality:Number = 50)
 		{
 			if (quality <= 0) {
 				quality = 1;
@@ -545,6 +593,15 @@ package com.adobe.images
 			initQuantTables(sf);
 		}
 	
+		/**
+		 * Created a JPEG image from the specified BitmapData
+		 *
+		 * @param image The BitmapData that will be converted into the JPEG format.
+		 * @return a ByteArray representing the JPEG encoded image data.
+		 * @langversion ActionScript 3.0
+		 * @playerversion Flash 9.0
+		 * @tiptext
+		 */	
 		public function encode(image:BitmapData):ByteArray
 		{
 			// Initialize bit writer

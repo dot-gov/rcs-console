@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2008, Adobe Systems Incorporated
+  Copyright (c) 2009, Adobe Systems Incorporated
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without 
@@ -30,58 +30,32 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.utils
+package com.adobe.air.filesystem.events
 {
-	import flash.utils.Dictionary;
-	
-	public class DictionaryUtil
+	import flash.events.Event;
+	import flash.filesystem.File;
+
+	public class FileMonitorEvent extends Event
 	{
+		public static const CHANGE:String = "onFileChange";
+		public static const MOVE:String = "onFileMove";
+		public static const CREATE:String = "onFileCreate";
+		public static const ADD_VOLUME:String = "onVolumeAdd";
+		public static const REMOVE_VOLUME:String = "onVolumeRemove";
 		
-		/**
-		*	Returns an Array of all keys within the specified dictionary.	
-		* 
-		* 	@param d The Dictionary instance whose keys will be returned.
-		* 
-		* 	@return Array of keys contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getKeys(d:Dictionary):Array
+		public var file:File;
+		public function FileMonitorEvent(type:String, bubbles:Boolean=false, 
+				cancelable:Boolean=false)
 		{
-			var a:Array = new Array();
-			
-			for (var key:Object in d)
-			{
-				a.push(key);
-			}
-			
-			return a;
+			super(type, bubbles, cancelable);
 		}
 		
-		/**
-		*	Returns an Array of all values within the specified dictionary.		
-		* 
-		* 	@param d The Dictionary instance whose values will be returned.
-		* 
-		* 	@return Array of values contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getValues(d:Dictionary):Array
+		public override function clone():Event
 		{
-			var a:Array = new Array();
+			var out:FileMonitorEvent = new FileMonitorEvent(type, bubbles, cancelable);
+			out.file = file;
 			
-			for each (var value:Object in d)
-			{
-				a.push(value);
-			}
-			
-			return a;
+			return out;
 		}
-		
 	}
 }

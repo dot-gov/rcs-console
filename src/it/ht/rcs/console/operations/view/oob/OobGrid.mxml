@@ -56,9 +56,9 @@
       }
       private function receivedLabel(item:Object, column:GridColumn):String
       {
-        if((item[column.dataField]==null || item[column.dataField]=="") && item.rr && item.direction=="out")
-          return "rr is true: message"; 
-        return item[column.dataField]
+        if((item[column.dataField]==null || item[column.dataField]=="") && !item.rr && item.direction=="out")
+          return "Unsupported"; 
+        return TimeUtils.timestampFormatter(item[column.dataField] * 1000);
       }
      
 
@@ -68,22 +68,22 @@
 	<s:columns>
 		<s:ArrayList>
       
-      <s:GridColumn width="130"
+      <s:GridColumn width="100"
                     dataField="direction"
                     headerText="{R.get('INCOMING')}"
                     resizable="false">
         
       </s:GridColumn>
 
-      <s:GridColumn width="130"
-                    dataField="sender"
+      <s:GridColumn width="240"
+                    dataField="sender_name"
                     headerText="{R.get('FROM')}"
                     resizable="false">
         
       </s:GridColumn>
       
-      <s:GridColumn width="130"
-                    dataField="rcpt"
+      <s:GridColumn width="240"
+                    dataField="rcpt_name"
                     headerText="{R.get('TO')}"
                     resizable="false">
         
@@ -91,19 +91,19 @@
       
 			<s:GridColumn
 										dataField="sent_at"
-										headerText="{R.get('SENT_AT')}"
+										headerText="{R.get('SENT_AT')}" labelFunction="dateLabelFunction"
 										resizable="false">
 		
 			</s:GridColumn>
 
 			<s:GridColumn 
 										dataField="received_at"
-										headerText="{R.get('DATE_RECEIVED')}"
+										headerText="{R.get('DATE_RECEIVED')}" 
 										resizable="false"
 										editable="false" labelFunction="receivedLabel">
       
 			</s:GridColumn>
-			<s:GridColumn dataField="text"
+			<s:GridColumn dataField="oob_event.name"
 										headerText="{R.get('COMMAND')}"
 										resizable="false">
        

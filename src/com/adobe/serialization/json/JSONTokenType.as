@@ -8,11 +8,11 @@
 
   * Redistributions of source code must retain the above copyright notice, 
     this list of conditions and the following disclaimer.
-  
+
   * Redistributions in binary form must reproduce the above copyright
     notice, this list of conditions and the following disclaimer in the 
     documentation and/or other materials provided with the distribution.
-  
+
   * Neither the name of Adobe Systems Incorporated nor the names of its 
     contributors may be used to endorse or promote products derived from 
     this software without specific prior written permission.
@@ -30,58 +30,40 @@
   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-package com.adobe.utils
+package com.adobe.serialization.json
 {
-	import flash.utils.Dictionary;
 	
-	public class DictionaryUtil
+	/**
+	 * Class containing constant values for the different types
+	 * of tokens in a JSON encoded string.
+	 */
+	public final class JSONTokenType
 	{
+		public static const UNKNOWN:int = -1;
 		
-		/**
-		*	Returns an Array of all keys within the specified dictionary.	
-		* 
-		* 	@param d The Dictionary instance whose keys will be returned.
-		* 
-		* 	@return Array of keys contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getKeys(d:Dictionary):Array
-		{
-			var a:Array = new Array();
-			
-			for (var key:Object in d)
-			{
-				a.push(key);
-			}
-			
-			return a;
-		}
+		public static const COMMA:int = 0;
 		
-		/**
-		*	Returns an Array of all values within the specified dictionary.		
-		* 
-		* 	@param d The Dictionary instance whose values will be returned.
-		* 
-		* 	@return Array of values contained within the Dictionary
-		*
-		* 	@langversion ActionScript 3.0
-		*	@playerversion Flash 9.0
-		*	@tiptext
-		*/					
-		public static function getValues(d:Dictionary):Array
-		{
-			var a:Array = new Array();
-			
-			for each (var value:Object in d)
-			{
-				a.push(value);
-			}
-			
-			return a;
-		}
+		public static const LEFT_BRACE:int = 1;
 		
+		public static const RIGHT_BRACE:int = 2;
+		
+		public static const LEFT_BRACKET:int = 3;
+		
+		public static const RIGHT_BRACKET:int = 4;
+		
+		public static const COLON:int = 6;
+		
+		public static const TRUE:int = 7;
+		
+		public static const FALSE:int = 8;
+		
+		public static const NULL:int = 9;
+		
+		public static const STRING:int = 10;
+		
+		public static const NUMBER:int = 11;
+		
+		public static const NAN:int = 12;
+	
 	}
 }
