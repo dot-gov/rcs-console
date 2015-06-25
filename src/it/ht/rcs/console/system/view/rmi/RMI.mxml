@@ -14,13 +14,15 @@
 
 	<fx:Script>
 		<![CDATA[
-			import it.ht.rcs.console.events.DataLoadedEvent;
-			import it.ht.rcs.console.modem.controller.ModemManager;
-			import it.ht.rcs.console.modem.model.Modem;
-			import it.ht.rcs.console.system.view.backend.graph.renderers.DBRenderer;
-			import it.ht.rcs.console.system.view.rmi.graph.renderers.ModemRenderer;
-
-			import mx.collections.ListCollectionView;
+      import it.ht.rcs.console.events.DataLoadedEvent;
+      import it.ht.rcs.console.modem.controller.ModemManager;
+      import it.ht.rcs.console.modem.model.Modem;
+      import it.ht.rcs.console.push.PushController;
+      import it.ht.rcs.console.push.PushEvent;
+      import it.ht.rcs.console.system.view.backend.graph.renderers.DBRenderer;
+      import it.ht.rcs.console.system.view.rmi.graph.renderers.ModemRenderer;
+      
+      import mx.collections.ListCollectionView;
 
 			[Bindable]
 			private var modems:ListCollectionView;
@@ -38,15 +40,22 @@
 			private function onAddedToStage(event:Event):void
 			{
 
+        PushController.instance.addEventListener(PushEvent.MODEM_INFO, onPush)
 				ModemManager.instance.addEventListener(DataLoadedEvent.DATA_LOADED, refreshView);
 				ModemManager.instance.listenRefresh();
 			}
 
 			private function onRemovedFromStage(event:Event):void
 			{
+        PushController.instance.removeEventListener(PushEvent.MODEM_INFO, onPush)
 				ModemManager.instance.removeEventListener(DataLoadedEvent.DATA_LOADED, refreshView);
 				ModemManager.instance.unlistenRefresh();
 			}
+      
+      private function onPush(e:PushEvent):void
+      {
+       ModemManager.instance.refresh()
+      }
 
 			private function refreshView(event:DataLoadedEvent=null):void
 			{
