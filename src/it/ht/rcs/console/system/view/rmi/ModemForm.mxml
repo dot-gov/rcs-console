@@ -53,8 +53,8 @@
           AlertPopUp.show(R.get('MODEM_INVALID_PIN'));
           return
         }
-        var re:RegExp = new RegExp("^(COM\d+|\/dev\/.+)$", "g");
-        if(!port.text.match(re).length>0) //TODO > PORT VALIDATION
+        var re:RegExp = /^(COM\d+|\/dev\/.+)$/g     //new RegExp("^(COM\d+|\/dev\/.+)$", "g");
+        if(!port.text.match(re).length>0)
         {
           AlertPopUp.show(R.get('MODEM_INVALID_PORT'));
           return
