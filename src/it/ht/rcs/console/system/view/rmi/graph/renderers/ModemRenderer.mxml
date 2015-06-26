@@ -211,7 +211,7 @@
 			<s:Label paddingLeft="10"
 							 fontSize="12"
 							 maxDisplayedLines="1"
-							 text="Legacy: {_modem.legacy}"
+							 text="{R.get('MODEM_LEGACY')}"
 							 visible="{_modem.legacy}"
 							 includeInLayout="{_modem.legacy}"/>
 

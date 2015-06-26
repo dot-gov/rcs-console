@@ -64,7 +64,7 @@
         this.saveButton.label=R.get('SEND')
 				modemsCb.dataProvider=modems
         modemsCb.selectedIndex=0
-				saveButton.enabled=modems != null
+				saveButton.enabled=modems.length>0
 				AgentManager.instance.oob_events(agent, onResult)
         sendingTxt.visible=false;
 			}
@@ -87,7 +87,7 @@
 					noCommandsTxt.visible=true;
 					noCommandsTxt.includeInLayout=true;
 				}
-
+        saveButton.enabled=commands.length>0 && modems.length>0
 			}
 		]]>
 	</fx:Script>
@@ -96,8 +96,18 @@
 					right="5"
 					bottom="10"
 					skinClass="it.ht.rcs.console.skins.CompactForm">
+    
+    <s:FormItem id="noModem"
+                visible="{modems.length &lt;1}"
+                includeInLayout="{modems.length &lt;1}">
+      <s:Label text="{R.get('NO_MODEM')}"
+               color="0xFF0000"
+               fontWeight="bold"/>
+    </s:FormItem>
 
 		<s:FormItem label="{R.get('MODEM')}"
+                visible="{modems.length &gt; 0}"
+                includeInLayout="{modems.length &gt; 0}"
 								skinClass="it.ht.rcs.console.skins.CompactFormItem">
 			<s:DropDownList id="modemsCb" width="200"
 											labelField="name"/>

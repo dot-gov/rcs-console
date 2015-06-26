@@ -98,8 +98,6 @@
 
 			}
 
-
-
 			private function onRemovedFromStage():void
 			{
 

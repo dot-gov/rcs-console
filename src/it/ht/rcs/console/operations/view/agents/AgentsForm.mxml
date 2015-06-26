@@ -72,6 +72,7 @@
 			{
 				agent.name=agentName.text;
 				agent.desc=desc.text;
+        agent.pn=number.text
 				agent.type=type.selectedItem.label.toLowerCase();
 				agent.status=getStatus();
 			}
@@ -98,6 +99,14 @@
 									width="250"
 									heightInLines="3"
 									text="{agent.desc}"/>
+		</s:FormItem>
+
+		<s:FormItem label="{R.get('NUMBER')}"
+								visible="{agent.type=='mobile'}"
+								includeInLayout="{agent.type=='mobile'}">
+			<s:TextInput id="number" restrict="0-9 +"
+									width="150"
+									text="{agent.pn}"/>
 		</s:FormItem>
 
 		<s:FormItem label="{R.get('TYPE')}"

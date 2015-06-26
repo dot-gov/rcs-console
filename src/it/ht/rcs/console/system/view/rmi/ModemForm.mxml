@@ -98,13 +98,12 @@
     </s:FormItem>
     
     <s:FormItem label="{R.get('NUMBER')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
-      <s:TextInput id="number" width="200" text="{modem.number}" restrict="0-9 +"/>
+      <s:TextInput id="number" width="100" text="{modem.number}" restrict="0-9 +"/>
     </s:FormItem>
     
     <s:FormItem label="{R.get('PIN')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
-      <s:TextInput id="pin" width="200" text="{modem.pin}" restrict="0-9"/>
+      <s:TextInput id="pin" width="100" text="{modem.pin}" restrict="0-9"/>
     </s:FormItem>
- 
     <s:FormItem label="{R.get('PORT')}" skinClass="it.ht.rcs.console.skins.CompactFormItem">
       <s:TextInput id="port" width="100" text="{modem.port}" />
     </s:FormItem>

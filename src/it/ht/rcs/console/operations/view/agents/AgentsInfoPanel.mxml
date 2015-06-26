@@ -19,6 +19,7 @@
       import locale.R;
       
       import mx.core.FlexGlobals;
+      import mx.managers.PopUpManager;
       import mx.rpc.events.ResultEvent;
       
       [Bindable]
@@ -84,6 +85,16 @@
         
       }
       
+      private function editNumber():void
+      {
+        var popup:AgentsForm=PopUpManager.createPopUp(root, AgentsForm, true) as AgentsForm;
+        popup.operation=section.stateManager.selectedOperation;
+        popup.target=section.stateManager.selectedTarget;
+        popup.agent=_selectedItem as Agent;
+        popup.currentState=AgentsForm.EDIT;
+        PopUpManager.centerPopUp(popup);
+      }
+      
     ]]>
   </fx:Script>
 
@@ -125,8 +136,9 @@
         <s:RichEditableText editable="false" text="{ObjectUtils.capitalize(_selectedItem.type)}"/>
       </s:FormItem>
       
-      <s:FormItem label="{R.get('NUMBER')}" visible="{_selectedItem.pn!=null &amp;&amp; _selectedItem.type=='mobile'}">
-        <s:RichEditableText editable="false" text="{ObjectUtils.capitalize(_selectedItem.pn)}"/>
+      <s:FormItem label="{R.get('NUMBER')}" visible="{_selectedItem.type=='mobile'}" includeInLayout="{_selectedItem.type=='mobile'}">
+        <s:RichEditableText editable="false" text="{ObjectUtils.capitalize(_selectedItem.pn)}" visible="{_selectedItem.pn!=null}" includeInLayout="{_selectedItem.pn!=null}"/>
+        <s:Button label="{_selectedItem.pn!=null &amp;&amp; _selectedItem.pn!=''? R.get('CHANGE'): R.get('ADD')}" click="editNumber()"/>
       </s:FormItem>
       
       <s:FormItem label="{R.get('LEVEL')}" includeInLayout="{_selectedItem._kind=='agent'}" visible="{_selectedItem._kind=='agent'}">

@@ -130,7 +130,7 @@
 												 section="{section}"
 												 doubleClick="onDoubleClick(event)"
 												 keyUp="onKeyUp(event)"
-												 height="{section.currentState=='singleAgent'?200:120}"
+												 height="{section.currentState=='singleAgent'?240:120}"
 												 change="{list.selectedItem=null}"/>
 					<s:Line width="100%"
 									visible="{section.currentState=='singleTarget'}"
