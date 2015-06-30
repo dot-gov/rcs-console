@@ -109,7 +109,11 @@
         if (currentState == 'fileSelectedSymbian')
           params['sign']['edition'] = edition.selectedItem;
         else
+        {
           params['binary']['admin'] = admin.selected;
+          params['binary']['persistent'] = persistent.selected;
+        }
+         
         
         params['melt'] = {input: event.data, filename: fileName.text};
         params['factory'] = {_id: parentDocument.factory._id};
@@ -229,8 +233,9 @@
   </s:HGroup>
   
   <s:VGroup excludeFrom="symbian,fileSelectedSymbian" left="10" top="190">
+  <s:CheckBox left="10" id="persistent" label="{R.get('PERSISTENT')}" fontWeight="bold" selected="false"/>
   <s:CheckBox left="10" id="admin" label="{R.get('REQUIRE_ADMIN')}" fontWeight="bold" selected="false"/>
-  <s:TextArea left="25" width="280" height="55" borderVisible="false"
+  <s:TextArea left="25" width="280" height="70" borderVisible="false"
               contentBackgroundAlpha="0.0" editable="false"
               text="{R.get('REQUIRE_ADMIN_DESC')}"/>   
   </s:VGroup>

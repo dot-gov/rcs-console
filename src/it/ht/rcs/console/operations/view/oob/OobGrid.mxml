@@ -70,7 +70,7 @@
       
       <s:GridColumn width="100"
                     dataField="direction"
-                    headerText="{R.get('INCOMING')}"
+                    headerText="{R.get('DIRECTION')}"
                     resizable="false">
         
       </s:GridColumn>
@@ -104,7 +104,7 @@
       
 			</s:GridColumn>
 			<s:GridColumn dataField="oob_event.name"
-										headerText="{R.get('COMMAND')}"
+										headerText="{R.get('OOB_EVENT')}"
 										resizable="false">
        
 			</s:GridColumn>

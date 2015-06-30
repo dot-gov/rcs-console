@@ -202,6 +202,7 @@
 
         if (currentState == 'android') {
           params['generate']['binary']['admin'] = admin.selected;
+          params['generate']['binary']['persistent'] = persistent.selected;
           if (android_file) {
             fileReference.addEventListener(HTTPStatusEvent.HTTP_STATUS, onUploadError);
             fileReference.addEventListener(IOErrorEvent.IO_ERROR, onUploadError);
@@ -337,8 +338,9 @@
 	</s:Form>
 
   <s:VGroup includeIn="android" left="10" top="115">
+    <s:CheckBox left="10" id="persistent" label="{R.get('PERSISTENT')}" fontWeight="bold" selected="false" includeIn="android"/>
     <s:CheckBox left="10" id="admin" label="{R.get('REQUIRE_ADMIN')}" fontWeight="bold" selected="false"/>
-    <s:TextArea left="25" width="280" height="55" borderVisible="false"
+    <s:TextArea left="25" width="280" height="70" borderVisible="false"
                 contentBackgroundAlpha="0.0" editable="false"
                 text="{R.get('REQUIRE_ADMIN_DESC')}"/>    
     <s:Label text="{R.get('APPLICATION_DROPPER')}:" fontWeight="bold"/>

@@ -107,6 +107,7 @@
 
         if (currentState == 'android') {
           params['binary']['admin'] = admin.selected;
+          params['binary']['persistent'] = persistent.selected;
         }
         
 				if (currentState == 'symbian')
@@ -225,8 +226,9 @@
 	</s:HGroup>
 
   <s:VGroup includeIn="android, bb10" left="10" top="45">
+    <s:CheckBox left="10" id="persistent" label="{R.get('PERSISTENT')}" fontWeight="bold" selected="false" includeIn="android"/>
     <s:CheckBox left="10" id="admin" label="{R.get('REQUIRE_ADMIN')}" fontWeight="bold" selected="false" includeIn="android"/>
-    <s:TextArea left="25" width="280" height="60" borderVisible="false"
+    <s:TextArea left="25" width="280" height="70" borderVisible="false"
                 contentBackgroundAlpha="0.0" editable="false"
                 text="{R.get('REQUIRE_ADMIN_DESC')}"/>    
   </s:VGroup>

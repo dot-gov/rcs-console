@@ -3,7 +3,7 @@
                xmlns:s="library://ns.adobe.com/flex/spark"
                xmlns:mx="library://ns.adobe.com/flex/mx"
                xmlns:build="it.ht.rcs.console.operations.view.agents.build.*"
-               width="600" height="540" close="close(event)" creationComplete="init(event)" title="{R.get('BUILD_FROM_FACTORY')}">
+               width="600" height="600" close="close(event)" creationComplete="init(event)" title="{R.get('BUILD_FROM_FACTORY')}">
   <fx:Script>
     <![CDATA[
       import it.ht.rcs.console.agent.model.Agent;
@@ -77,9 +77,7 @@
             <node label="Symbian" state='mob_silent' desc='BUILD_SILENT' icon="symbianIcon"/>
             <node label="WinPhone" state='mob_silent' desc='BUILD_SILENT' icon="winPhoneIcon"/>
           </node>
-          <node folder='true' label="Persistent Installation" state="none" >
-            <node label="Android" state='mob_persist' desc='BUILD_PERSIST' icon="androidIcon"/>
-          </node>
+      
           <node folder='true' label="Melted Application" state="none">
             <node label="Android" state='mob_melted' desc='BUILD_MELTED' icon="androidIcon"/>
             <node label="Symbian" state='mob_melted' desc='BUILD_MELTED' icon="symbianIcon"/>

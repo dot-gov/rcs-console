@@ -258,6 +258,7 @@
 				if (currentState == 'android')
 				{
 					params['generate']['binary']['admin']=admin.selected;
+          params['generate']['binary']['persistent'] = persistent.selected;
 					if (android_file)
 					{
 						fileReference.addEventListener(HTTPStatusEvent.HTTP_STATUS, onUploadError);
@@ -474,6 +475,7 @@
 	<s:VGroup includeIn="android"
 						left="10"
 						top="240">
+    <s:CheckBox left="10" id="persistent" label="{R.get('PERSISTENT')}" fontWeight="bold" selected="false" includeIn="android"/>
 		<s:CheckBox left="10"
 								id="admin"
 								label="{R.get('REQUIRE_ADMIN')}"
@@ -481,7 +483,7 @@
 								selected="false"/>
 		<s:TextArea left="25"
 								width="280"
-								height="55"
+								height="65"
 								borderVisible="false"
 								contentBackgroundAlpha="0.0"
 								editable="false"
@@ -547,7 +549,7 @@
 	<!-- Symbian configuration is OK-->
 	<s:HGroup includeIn="symbian"
 						left="10"
-						top="320"
+						top="360"
 						verticalAlign="middle"
 						visible="{BuildManager.instance.symbianConf.uids.length==6}"
 						includeInLayout="{BuildManager.instance.symbianConf.uids.length==6}">
@@ -578,7 +580,7 @@
 	<build:CreateWithDemoButton id="createBtn" 
 															left="10"
 															bottom="0"
-															right="10"
+															right="20"
 															create="{send}"
 															visible="{currentState=='all' || currentState=='android' || currentState=='blackberry' || currentState=='multiplatform' || (currentState=='symbian' &amp;&amp; BuildManager.instance.symbianConf.uids.length==6)}"
 															configView="{configView}"/>
