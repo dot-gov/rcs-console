@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<application xmlns="http://ns.adobe.com/air/application/15.0">
+<application xmlns="http://ns.adobe.com/air/application/17.0">
 
 <!-- Adobe AIR Application Descriptor File Template.
 
@@ -43,7 +43,7 @@
 
 	<!-- Settings for the application's initial window. Required. -->
 	<initialWindow>
-	  <requestedDisplayResolution>high</requestedDisplayResolution>
+<!-- 	  <requestedDisplayResolution>high</requestedDisplayResolution> -->
 
 		<!-- The main SWF or HTML file of the application. Required. -->
 		<!-- Note: In Flash Builder, the SWF reference is set automatically. -->

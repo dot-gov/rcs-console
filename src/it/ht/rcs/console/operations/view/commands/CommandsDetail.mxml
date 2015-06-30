@@ -4,20 +4,35 @@
 									 xmlns:mx="library://ns.adobe.com/flex/mx"
 									 height="100%"
 									 width="100%"
-                   borderColor="0xCCCCCC"
-                   backgroundColor="0xFFFFFF"
-                   backgroundAlpha="1">
+									 borderColor="0xCCCCCC"
+									 backgroundColor="0xFFFFFF"
+									 backgroundAlpha="1">
 	<fx:Script>
 		<![CDATA[
 			import flashx.textLayout.conversion.TextConverter;
 
+			import it.ht.rcs.console.DB;
+			import it.ht.rcs.console.evidence.controller.EvidenceManager;
+			import it.ht.rcs.console.operations.view.OperationsSection;
+			import it.ht.rcs.console.utils.StringUtils;
+
+			import locale.R;
 
 			private var _evidence:Object;
+
+
+			private var file:flash.filesystem.File;
+			private var stream:URLStream;
+			private var extension:String;
+			private var request:URLRequest
+
+			[Bindable]
+			public var section:OperationsSection;
 
 			[Bindable]
 			public function set evidence(value:Object):void
 			{
-        _evidence=value; //program, action, description
+				_evidence=value; //program, action, description
 
 			}
 
@@ -31,24 +46,90 @@
 				var result:String=s.replace(new RegExp("\n", "g"), "<br>");
 				return result;
 			}
+
+			private function download():void
+			{
+				var target:String=section.stateManager.selectedTarget._id
+				var id:String=evidence._id
+				var url:String
+				if (DB.instance.demo)
+				{
+					url=""
+				}
+				else
+				{
+					url=DB.hostAutocomplete(Console.currentSession.server) + "evidence/command/" + id + "?target_id=" + target;
+				}
+
+				extension=".txt" //StringUtils.getExtension(evidence.data.path)
+				var fileName:String=evidence._id + extension //evidence.data._grid + encodeURIComponent(target) + "." + extension; // ?? get original filename? (StringUtils.getFilename)
+
+				request=new URLRequest(url);
+				stream=new URLStream();
+				file=flash.filesystem.File.documentsDirectory.resolvePath(fileName);
+				file.browseForSave("Download " + fileName);
+				file.addEventListener(Event.SELECT, onSelect);
+			}
+
+			private function onSelect(e:Event):void
+			{
+
+				stream.addEventListener(Event.COMPLETE, onFileDownloaded);
+				stream.addEventListener(ProgressEvent.PROGRESS, onDownloadProgress);
+				stream.addEventListener(IOErrorEvent.IO_ERROR, onDownloadError);
+				stream.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onDownloadError)
+				stream.load(request);
+			}
+
+			private function onDownloadProgress(e:ProgressEvent):void
+			{
+				var perc:int=int((e.bytesLoaded / e.bytesTotal) * 100)
+				//downloadStatusTxt.text="Downloading file..." + perc + " % completed."
+			}
+
+			private function onDownloadError(e:*):void
+			{
+			/*  downloadBtn.enabled=true;
+			 downloadStatusTxt.text="Error downloading file. Try again" */
+			}
+
+			private function onFileDownloaded(e:Event):void
+			{
+
+				var fileData:ByteArray=new ByteArray();
+				stream.readBytes(fileData, 0, stream.bytesAvailable);
+				var fileStream:FileStream=new FileStream();
+				fileStream.open(file, FileMode.WRITE);
+				fileStream.writeBytes(fileData, 0, fileData.length);
+				fileStream.close();
+			}
 		]]>
 	</fx:Script>
-<s:layout>
-  <s:VerticalLayout paddingBottom="10"
-                      paddingLeft="10"
-                      paddingRight="10"
-                      paddingTop="10"
-                      />
-</s:layout>
-  <s:RichText id="commandTxt" width="100%" textFlow="{TextConverter.importToFlow('&lt;b&gt;Command: &lt;/b&gt;'+evidence.data.command, TextConverter.TEXT_FIELD_HTML_FORMAT)}" fontSize="12"/>
-  <s:Line width="100%">
-    <s:stroke>
-      <s:SolidColorStroke color="0xCCCCCC"/>
-    </s:stroke>
-  </s:Line>
-  <s:Scroller height="100%"
-              width="100%" id="scroller">
-    <s:RichEditableText editable="false"
-                        id="contentTxt" textFlow="{TextConverter.importToFlow('&lt;b&gt;Output: &lt;/b&gt;&lt;br&gt;'+lineBreak(evidence.data.content), TextConverter.TEXT_FIELD_HTML_FORMAT)}" fontSize="12"/>
-  </s:Scroller>
+	<s:layout>
+		<s:VerticalLayout paddingBottom="10"
+											paddingLeft="10"
+											paddingRight="10"
+											paddingTop="10"/>
+	</s:layout>
+	<s:RichText id="commandTxt"
+							width="100%"
+							textFlow="{TextConverter.importToFlow('&lt;b&gt;Command: &lt;/b&gt;'+evidence.data.command, TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+							fontSize="12"/>
+	<s:Line width="100%">
+		<s:stroke>
+			<s:SolidColorStroke color="0xCCCCCC"/>
+		</s:stroke>
+	</s:Line>
+	<s:Scroller height="100%"
+							width="100%"
+							id="scroller">
+		<s:RichEditableText editable="false"
+												id="contentTxt"
+												textFlow="{TextConverter.importToFlow('&lt;b&gt;Output: &lt;/b&gt;&lt;br&gt;'+lineBreak(evidence.data.content), TextConverter.TEXT_FIELD_HTML_FORMAT)}"
+												fontSize="12"/>
+	</s:Scroller>
+	<s:Button label="{R.get('DOWNLOAD')}"
+						visible="{evidence.data.content_downloadable}"
+						includeInLayout="{evidence.data.content_downloadable}"
+						click="download()"/>
 </s:BorderContainer>
